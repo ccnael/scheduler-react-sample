@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Card } from './Card';
+import { OnlineUsers } from './OnlineUsers';
 import {
   ResizablePanelGroup,
   ResizablePanel,
@@ -30,8 +31,17 @@ export const KanbanBoard = () => {
         direction="horizontal"
         className="min-h-[200px] rounded-lg border"
       >
+        {/* Team Members Column */}
+        <ResizablePanel defaultSize={20}>
+          <div className="h-full bg-white p-4">
+            <OnlineUsers />
+          </div>
+        </ResizablePanel>
+
+        <ResizableHandle withHandle />
+
         {/* To Do Column */}
-        <ResizablePanel defaultSize={50}>
+        <ResizablePanel defaultSize={40}>
           <div className="h-full bg-white p-4">
             <h2 className="text-xl font-semibold mb-4 text-gray-700">To Do</h2>
             <div className="grid grid-cols-4 gap-3">
@@ -52,7 +62,7 @@ export const KanbanBoard = () => {
         <ResizableHandle withHandle />
 
         {/* In Progress Column */}
-        <ResizablePanel defaultSize={50}>
+        <ResizablePanel defaultSize={40}>
           <div className="h-full bg-white p-4">
             <h2 className="text-xl font-semibold mb-4 text-gray-700">In Progress</h2>
             <div className="grid grid-cols-4 gap-3 min-h-[100px]">
