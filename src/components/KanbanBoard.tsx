@@ -34,7 +34,7 @@ export const KanbanBoard = () => {
         <ResizablePanel defaultSize={50}>
           <div className="h-full bg-white p-4">
             <h2 className="text-xl font-semibold mb-4 text-gray-700">To Do</h2>
-            <div className="space-y-3">
+            <div className="grid grid-cols-4 gap-3">
               {cards.map((card) => (
                 <Card
                   key={card.id}
@@ -55,7 +55,7 @@ export const KanbanBoard = () => {
         <ResizablePanel defaultSize={50}>
           <div className="h-full bg-white p-4">
             <h2 className="text-xl font-semibold mb-4 text-gray-700">In Progress</h2>
-            <div className="space-y-3 min-h-[100px]">
+            <div className="grid grid-cols-4 gap-3 min-h-[100px]">
               {/* Cards will be dropped here */}
             </div>
           </div>
