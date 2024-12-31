@@ -32,7 +32,7 @@ export const KanbanBoard = () => {
         className="min-h-[200px] rounded-lg border"
       >
         {/* Team Members Column */}
-        <ResizablePanel defaultSize={20}>
+        <ResizablePanel defaultSize={20} minSize={15} className="min-w-[250px]">
           <div className="h-full bg-white p-4">
             <OnlineUsers />
           </div>
@@ -44,7 +44,7 @@ export const KanbanBoard = () => {
         <ResizablePanel defaultSize={40}>
           <div className="h-full bg-white p-4">
             <h2 className="text-xl font-semibold mb-4 text-gray-700">To Do</h2>
-            <div className="grid grid-cols-4 gap-3">
+            <div className="grid auto-rows-max gap-3 justify-items-center">
               {cards.map((card) => (
                 <Card
                   key={card.id}
@@ -65,7 +65,7 @@ export const KanbanBoard = () => {
         <ResizablePanel defaultSize={40}>
           <div className="h-full bg-white p-4">
             <h2 className="text-xl font-semibold mb-4 text-gray-700">In Progress</h2>
-            <div className="grid grid-cols-4 gap-3 min-h-[100px]">
+            <div className="grid auto-rows-max gap-3 justify-items-center min-h-[100px]">
               {/* Cards will be dropped here */}
             </div>
           </div>

@@ -25,13 +25,13 @@ export const Card = ({
       onDragEnd={onDragEnd}
       className={`
         bg-white rounded-lg border border-gray-200 p-4 cursor-grab
-        transition-all duration-200
+        transition-all duration-200 w-[200px] h-[120px]
         ${isDragging ? 'opacity-50' : 'opacity-100'}
         hover:shadow-lg hover:border-blue-200
       `}
     >
-      <h3 className="font-semibold text-gray-800 mb-2">{title}</h3>
-      <p className="text-gray-600 text-sm">{description}</p>
+      <h3 className="font-semibold text-gray-800 mb-2 truncate">{title}</h3>
+      <p className="text-gray-600 text-sm line-clamp-2">{description}</p>
     </div>
   );
 };
