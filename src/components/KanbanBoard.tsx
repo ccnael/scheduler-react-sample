@@ -27,50 +27,46 @@ export const KanbanBoard = () => {
   return (
     <div className="p-6 min-h-screen bg-gray-50">
       <h1 className="text-3xl font-bold text-gray-800 mb-8">Kanban Board</h1>
-      <ResizablePanelGroup
-        direction="horizontal"
-        className="min-h-[200px] rounded-lg border"
-      >
-        {/* Team Members Column */}
-        <ResizablePanel defaultSize={20} minSize={15} className="min-w-[250px]">
-          <div className="h-full bg-white p-4">
-            <OnlineUsers />
-          </div>
-        </ResizablePanel>
+      <div className="flex min-h-[200px] rounded-lg border">
+        {/* Team Members Column - Now fixed width */}
+        <div className="w-[250px] min-w-[250px] h-full bg-white p-4 border-r">
+          <OnlineUsers />
+        </div>
 
-        <ResizableHandle withHandle />
-
-        {/* To Do Column */}
-        <ResizablePanel defaultSize={40}>
-          <div className="h-full bg-white p-4">
-            <h2 className="text-xl font-semibold mb-4 text-gray-700">To Do</h2>
-            <div className="grid grid-cols-3 auto-rows-max gap-3 justify-items-center">
-              {cards.map((card) => (
-                <Card
-                  key={card.id}
-                  {...card}
-                  draggable
-                  onDragStart={() => handleDragStart(card.id)}
-                  onDragEnd={handleDragEnd}
-                  isDragging={draggedCard === card.id}
-                />
-              ))}
+        {/* Resizable Panels for Todo and In Progress */}
+        <ResizablePanelGroup direction="horizontal" className="flex-1">
+          {/* To Do Column */}
+          <ResizablePanel defaultSize={50}>
+            <div className="h-full bg-white p-4">
+              <h2 className="text-xl font-semibold mb-4 text-gray-700">To Do</h2>
+              <div className="grid grid-cols-3 auto-rows-max gap-3 justify-items-center">
+                {cards.map((card) => (
+                  <Card
+                    key={card.id}
+                    {...card}
+                    draggable
+                    onDragStart={() => handleDragStart(card.id)}
+                    onDragEnd={handleDragEnd}
+                    isDragging={draggedCard === card.id}
+                  />
+                ))}
+              </div>
             </div>
-          </div>
-        </ResizablePanel>
+          </ResizablePanel>
 
-        <ResizableHandle withHandle />
+          <ResizableHandle withHandle />
 
-        {/* In Progress Column */}
-        <ResizablePanel defaultSize={40}>
-          <div className="h-full bg-white p-4">
-            <h2 className="text-xl font-semibold mb-4 text-gray-700">In Progress</h2>
-            <div className="grid grid-cols-3 auto-rows-max gap-3 justify-items-center min-h-[100px]">
-              {/* Cards will be dropped here */}
+          {/* In Progress Column */}
+          <ResizablePanel defaultSize={50}>
+            <div className="h-full bg-white p-4">
+              <h2 className="text-xl font-semibold mb-4 text-gray-700">In Progress</h2>
+              <div className="grid grid-cols-3 auto-rows-max gap-3 justify-items-center min-h-[100px]">
+                {/* Cards will be dropped here */}
+              </div>
             </div>
-          </div>
-        </ResizablePanel>
-      </ResizablePanelGroup>
+          </ResizablePanel>
+        </ResizablePanelGroup>
+      </div>
     </div>
   );
 };
