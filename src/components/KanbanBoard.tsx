@@ -41,8 +41,8 @@ export const KanbanBoard = () => {
               <h2 className="text-xl font-semibold mb-4 text-gray-700">To Do</h2>
               <div className="grid auto-rows-max gap-3 justify-items-center" 
                    style={{
-                     gridTemplateColumns: 'repeat(auto-fit, minmax(calc(33.333% - 1rem), 1fr))',
-                     minWidth: '600px'
+                     gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+                     width: '100%'
                    }}>
                 {cards.map((card) => (
                   <Card
@@ -66,8 +66,8 @@ export const KanbanBoard = () => {
               <h2 className="text-xl font-semibold mb-4 text-gray-700">In Progress</h2>
               <div className="grid auto-rows-max gap-3 justify-items-center"
                    style={{
-                     gridTemplateColumns: 'repeat(auto-fit, minmax(calc(33.333% - 1rem), 1fr))',
-                     minWidth: '600px'
+                     gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+                     width: '100%'
                    }}>
                 {/* Cards will be dropped here */}
               </div>
