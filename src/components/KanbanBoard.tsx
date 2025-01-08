@@ -15,6 +15,12 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { DataTable } from './DataTable';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 export const KanbanBoard = () => {
   const [cards, setCards] = useState([
@@ -124,7 +130,14 @@ export const KanbanBoard = () => {
           </DialogHeader>
           
           <div className="py-4">
-            <DataTable data={selectedCard ? [selectedCard] : []} />
+            <Accordion type="single" collapsible className="w-full">
+              <AccordionItem value="item-1">
+                <AccordionTrigger>View Card Details</AccordionTrigger>
+                <AccordionContent>
+                  <DataTable data={selectedCard ? [selectedCard] : []} />
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
           </div>
 
           <DialogFooter>
