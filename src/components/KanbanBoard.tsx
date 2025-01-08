@@ -130,7 +130,7 @@ export const KanbanBoard = () => {
           </DialogHeader>
           
           <div className="py-4">
-            <Accordion type="single" collapsible className="w-full">
+            <Accordion type="single" collapsible defaultValue="" className="w-full">
               <AccordionItem value="item-1">
                 <AccordionTrigger>View Card Details</AccordionTrigger>
                 <AccordionContent>
