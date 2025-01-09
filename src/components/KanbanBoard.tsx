@@ -40,8 +40,6 @@ export const KanbanBoard = () => {
   const [selectedCard, setSelectedCard] = useState<any>(null);
   const [inProgressCards, setInProgressCards] = useState<any[]>([]);
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [isTodoCollapsed, setIsTodoCollapsed] = useState(false);
-  const [isInProgressCollapsed, setIsInProgressCollapsed] = useState(false);
 
   const handleDragStart = (cardId: number) => {
     setDraggedCard(cardId);
@@ -78,101 +76,72 @@ export const KanbanBoard = () => {
   return (
     <div className="p-6 min-h-screen bg-gray-50">
       <h1 className="text-3xl font-bold text-gray-800 mb-8">Kanban Board</h1>
-      <div className="flex min-h-[200px] rounded-lg border">
+      <div className="flex min-h-[200px] rounded-lg border relative">
         <Collapsible
           open={!isCollapsed}
           onOpenChange={(open) => setIsCollapsed(!open)}
           className="w-[250px] min-w-[50px]"
         >
-          <CollapsibleTrigger asChild>
-            <Button 
-              variant="ghost" 
-              size="icon"
-              className={`absolute z-10 left-[${isCollapsed ? '12px' : '230px'}] top-[100px] transition-all duration-300`}
-            >
-              <ChevronRight className={`h-4 w-4 transition-transform ${!isCollapsed ? 'rotate-180' : ''}`} />
-            </Button>
-          </CollapsibleTrigger>
           <CollapsibleContent className="w-[250px] min-w-[250px] h-full bg-white p-4 border-r">
             <OnlineUsers />
           </CollapsibleContent>
         </Collapsible>
 
+        <CollapsibleTrigger asChild>
+          <Button 
+            variant="ghost" 
+            size="icon"
+            className="absolute z-10 left-[250px] top-1/2 -translate-y-1/2 -translate-x-1/2"
+          >
+            <ChevronRight className={`h-4 w-4 transition-transform ${!isCollapsed ? 'rotate-180' : ''}`} />
+          </Button>
+        </CollapsibleTrigger>
+
         <ResizablePanelGroup direction="horizontal" className="flex-1">
           <ResizablePanel defaultSize={50}>
-            <Collapsible
-              open={!isTodoCollapsed}
-              onOpenChange={(open) => setIsTodoCollapsed(!open)}
-              className="h-full"
-            >
-              <div className="h-full bg-white p-4">
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-xl font-semibold text-gray-700">To Do</h2>
-                  <CollapsibleTrigger asChild>
-                    <Button variant="ghost" size="icon">
-                      <ChevronRight className={`h-4 w-4 transition-transform ${!isTodoCollapsed ? 'rotate-90' : ''}`} />
-                    </Button>
-                  </CollapsibleTrigger>
-                </div>
-                <CollapsibleContent>
-                  <div className="grid auto-rows-max gap-3 justify-items-center" 
-                       style={{
-                         gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
-                         width: '100%'
-                       }}>
-                    {cards.map((card) => (
-                      <Card
-                        key={card.id}
-                        {...card}
-                        draggable
-                        onDragStart={() => handleDragStart(card.id)}
-                        onDragEnd={handleDragEnd}
-                        isDragging={draggedCard === card.id}
-                      />
-                    ))}
-                  </div>
-                </CollapsibleContent>
+            <div className="h-full bg-white p-4">
+              <h2 className="text-xl font-semibold text-gray-700 mb-4">To Do</h2>
+              <div className="grid auto-rows-max gap-3 justify-items-center" 
+                   style={{
+                     gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+                     width: '100%'
+                   }}>
+                {cards.map((card) => (
+                  <Card
+                    key={card.id}
+                    {...card}
+                    draggable
+                    onDragStart={() => handleDragStart(card.id)}
+                    onDragEnd={handleDragEnd}
+                    isDragging={draggedCard === card.id}
+                  />
+                ))}
               </div>
-            </Collapsible>
+            </div>
           </ResizablePanel>
 
           <ResizableHandle withHandle />
 
           <ResizablePanel defaultSize={50}>
-            <Collapsible
-              open={!isInProgressCollapsed}
-              onOpenChange={(open) => setIsInProgressCollapsed(!open)}
-              className="h-full"
+            <div 
+              className="h-full bg-white p-4"
+              onDragOver={handleDragOver}
+              onDrop={handleDrop}
             >
-              <div 
-                className="h-full bg-white p-4"
-                onDragOver={handleDragOver}
-                onDrop={handleDrop}
-              >
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-xl font-semibold text-gray-700">In Progress</h2>
-                  <CollapsibleTrigger asChild>
-                    <Button variant="ghost" size="icon">
-                      <ChevronRight className={`h-4 w-4 transition-transform ${!isInProgressCollapsed ? 'rotate-90' : ''}`} />
-                    </Button>
-                  </CollapsibleTrigger>
-                </div>
-                <CollapsibleContent>
-                  <div className="grid auto-rows-max gap-3 justify-items-center"
-                       style={{
-                         gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
-                         width: '100%'
-                       }}>
-                    {inProgressCards.map((card) => (
-                      <Card
-                        key={card.id}
-                        {...card}
-                      />
-                    ))}
-                  </div>
-                </CollapsibleContent>
+              <h2 className="text-xl font-semibold text-gray-700 mb-4">In Progress</h2>
+              <div className="grid auto-rows-max gap-3 justify-items-center"
+                   style={{
+                     gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+                     width: '100%'
+                   }}>
+                {inProgressCards.map((card) => (
+                  <Card
+                    key={card.id}
+                    {...card}
+                  />
+                ))}
               </div>
-            </Collapsible>
+            </div>
           </ResizablePanel>
         </ResizablePanelGroup>
       </div>
