@@ -124,7 +124,7 @@ export const KanbanBoard = () => {
       </div>
 
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="sm:max-w-[600px]">
+        <DialogContent className="sm:max-w-[1024px]">
           <DialogHeader>
             <DialogTitle>Move Card to In Progress</DialogTitle>
           </DialogHeader>
