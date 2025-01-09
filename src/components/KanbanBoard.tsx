@@ -80,22 +80,24 @@ export const KanbanBoard = () => {
         <Collapsible
           open={!isCollapsed}
           onOpenChange={(open) => setIsCollapsed(!open)}
-          className="w-[250px] min-w-[50px]"
+          className="relative"
         >
-          <CollapsibleContent className="w-[250px] min-w-[250px] h-full bg-white p-4 border-r">
-            <OnlineUsers />
-          </CollapsibleContent>
-        </Collapsible>
+          <div className="flex">
+            <CollapsibleContent className="w-[250px] min-w-[250px] h-full bg-white p-4 border-r">
+              <OnlineUsers />
+            </CollapsibleContent>
 
-        <CollapsibleTrigger asChild>
-          <Button 
-            variant="ghost" 
-            size="icon"
-            className="absolute z-10 left-[250px] top-1/2 -translate-y-1/2 -translate-x-1/2"
-          >
-            <ChevronRight className={`h-4 w-4 transition-transform ${!isCollapsed ? 'rotate-180' : ''}`} />
-          </Button>
-        </CollapsibleTrigger>
+            <CollapsibleTrigger asChild>
+              <Button 
+                variant="ghost" 
+                size="icon"
+                className="absolute z-10 -right-3 top-1/2 -translate-y-1/2"
+              >
+                <ChevronRight className={`h-4 w-4 transition-transform ${!isCollapsed ? 'rotate-180' : ''}`} />
+              </Button>
+            </CollapsibleTrigger>
+          </div>
+        </Collapsible>
 
         <ResizablePanelGroup direction="horizontal" className="flex-1">
           <ResizablePanel defaultSize={50}>
