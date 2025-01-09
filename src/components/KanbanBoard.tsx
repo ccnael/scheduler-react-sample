@@ -21,6 +21,12 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import { ChevronRight } from "lucide-react";
 
 export const KanbanBoard = () => {
   const [cards, setCards] = useState([
@@ -33,6 +39,7 @@ export const KanbanBoard = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCard, setSelectedCard] = useState<any>(null);
   const [inProgressCards, setInProgressCards] = useState<any[]>([]);
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   const handleDragStart = (cardId: number) => {
     setDraggedCard(cardId);
@@ -70,9 +77,24 @@ export const KanbanBoard = () => {
     <div className="p-6 min-h-screen bg-gray-50">
       <h1 className="text-3xl font-bold text-gray-800 mb-8">Kanban Board</h1>
       <div className="flex min-h-[200px] rounded-lg border">
-        <div className="w-[250px] min-w-[250px] h-full bg-white p-4 border-r">
-          <OnlineUsers />
-        </div>
+        <Collapsible
+          open={!isCollapsed}
+          onOpenChange={(open) => setIsCollapsed(!open)}
+          className="w-[250px] min-w-[50px]"
+        >
+          <CollapsibleTrigger asChild>
+            <Button 
+              variant="ghost" 
+              size="icon"
+              className={`absolute z-10 left-[${isCollapsed ? '12px' : '230px'}] top-[100px] transition-all duration-300`}
+            >
+              <ChevronRight className={`h-4 w-4 transition-transform ${!isCollapsed ? 'rotate-180' : ''}`} />
+            </Button>
+          </CollapsibleTrigger>
+          <CollapsibleContent className="w-[250px] min-w-[250px] h-full bg-white p-4 border-r">
+            <OnlineUsers />
+          </CollapsibleContent>
+        </Collapsible>
 
         <ResizablePanelGroup direction="horizontal" className="flex-1">
           <ResizablePanel defaultSize={50}>
