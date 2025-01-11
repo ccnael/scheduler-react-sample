@@ -29,6 +29,11 @@ import {
 } from "@/components/ui/collapsible";
 import { ChevronRight, Search } from "lucide-react";
 
+interface FilterState {
+  title: string;
+  description: string;
+}
+
 export const KanbanBoard = () => {
   const [cards, setCards] = useState([
     { id: 1, title: 'Task 1', description: 'Complete the project setup' },
@@ -41,9 +46,20 @@ export const KanbanBoard = () => {
   const [selectedCard, setSelectedCard] = useState<any>(null);
   const [inProgressCards, setInProgressCards] = useState<any[]>([]);
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [resourcesFilter, setResourcesFilter] = useState('');
-  const [availableJobsFilter, setAvailableJobsFilter] = useState('');
-  const [eventsFilter, setEventsFilter] = useState('');
+  
+  // Multiple filters for each section
+  const [resourcesFilter, setResourcesFilter] = useState<FilterState>({
+    title: '',
+    description: ''
+  });
+  const [availableJobsFilter, setAvailableJobsFilter] = useState<FilterState>({
+    title: '',
+    description: ''
+  });
+  const [eventsFilter, setEventsFilter] = useState<FilterState>({
+    title: '',
+    description: ''
+  });
 
   const handleDragStart = (cardId: number) => {
     setDraggedCard(cardId);
@@ -78,13 +94,13 @@ export const KanbanBoard = () => {
   };
 
   const filteredCards = cards.filter(card => 
-    card.title.toLowerCase().includes(availableJobsFilter.toLowerCase()) ||
-    card.description.toLowerCase().includes(availableJobsFilter.toLowerCase())
+    card.title.toLowerCase().includes(availableJobsFilter.title.toLowerCase()) &&
+    card.description.toLowerCase().includes(availableJobsFilter.description.toLowerCase())
   );
 
   const filteredEvents = inProgressCards.filter(card =>
-    card.title.toLowerCase().includes(eventsFilter.toLowerCase()) ||
-    card.description.toLowerCase().includes(eventsFilter.toLowerCase())
+    card.title.toLowerCase().includes(eventsFilter.title.toLowerCase()) &&
+    card.description.toLowerCase().includes(eventsFilter.description.toLowerCase())
   );
 
   return (
@@ -99,16 +115,27 @@ export const KanbanBoard = () => {
           <div className="flex">
             <CollapsibleContent className="w-[250px] min-w-[250px] h-full bg-white p-4 border-r">
               <div className="space-y-4">
-                <div className="relative">
-                  <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    placeholder="Filter resources..."
-                    value={resourcesFilter}
-                    onChange={(e) => setResourcesFilter(e.target.value)}
-                    className="pl-8"
-                  />
+                <div className="space-y-2">
+                  <div className="relative">
+                    <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      placeholder="Filter by name..."
+                      value={resourcesFilter.title}
+                      onChange={(e) => setResourcesFilter(prev => ({ ...prev, title: e.target.value }))}
+                      className="pl-8"
+                    />
+                  </div>
+                  <div className="relative">
+                    <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      placeholder="Filter by description..."
+                      value={resourcesFilter.description}
+                      onChange={(e) => setResourcesFilter(prev => ({ ...prev, description: e.target.value }))}
+                      className="pl-8"
+                    />
+                  </div>
                 </div>
-                <OnlineUsers filterText={resourcesFilter} />
+                <OnlineUsers filterText={resourcesFilter.title} />
               </div>
             </CollapsibleContent>
 
@@ -128,14 +155,25 @@ export const KanbanBoard = () => {
           <ResizablePanel defaultSize={50}>
             <div className="h-full bg-white p-4">
               <div className="space-y-4">
-                <div className="relative">
-                  <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    placeholder="Filter available jobs..."
-                    value={availableJobsFilter}
-                    onChange={(e) => setAvailableJobsFilter(e.target.value)}
-                    className="pl-8"
-                  />
+                <div className="space-y-2">
+                  <div className="relative">
+                    <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      placeholder="Filter jobs by title..."
+                      value={availableJobsFilter.title}
+                      onChange={(e) => setAvailableJobsFilter(prev => ({ ...prev, title: e.target.value }))}
+                      className="pl-8"
+                    />
+                  </div>
+                  <div className="relative">
+                    <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      placeholder="Filter jobs by description..."
+                      value={availableJobsFilter.description}
+                      onChange={(e) => setAvailableJobsFilter(prev => ({ ...prev, description: e.target.value }))}
+                      className="pl-8"
+                    />
+                  </div>
                 </div>
                 <h2 className="text-xl font-semibold text-gray-700">Available Jobs</h2>
                 <div className="grid auto-rows-max gap-3 justify-items-center" 
@@ -167,14 +205,25 @@ export const KanbanBoard = () => {
               onDrop={handleDrop}
             >
               <div className="space-y-4">
-                <div className="relative">
-                  <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    placeholder="Filter events..."
-                    value={eventsFilter}
-                    onChange={(e) => setEventsFilter(e.target.value)}
-                    className="pl-8"
-                  />
+                <div className="space-y-2">
+                  <div className="relative">
+                    <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      placeholder="Filter events by title..."
+                      value={eventsFilter.title}
+                      onChange={(e) => setEventsFilter(prev => ({ ...prev, title: e.target.value }))}
+                      className="pl-8"
+                    />
+                  </div>
+                  <div className="relative">
+                    <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      placeholder="Filter events by description..."
+                      value={eventsFilter.description}
+                      onChange={(e) => setEventsFilter(prev => ({ ...prev, description: e.target.value }))}
+                      className="pl-8"
+                    />
+                  </div>
                 </div>
                 <h2 className="text-xl font-semibold text-gray-700">Events</h2>
                 <div className="grid auto-rows-max gap-3 justify-items-center"
