@@ -41,6 +41,8 @@ const CalendarPage = () => {
               initialView="resourceTimelineWeek"
               resources={resources}
               events={events}
+              slotDuration="04:00:00"
+              slotLabelInterval="04:00:00"
               headerToolbar={{
                 left: "prev,next today",
                 center: "title",
