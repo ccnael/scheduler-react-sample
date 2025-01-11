@@ -18,7 +18,7 @@ export const Navigation = () => {
               )}
             >
               <Kanban className="h-4 w-4" />
-              <span>Kanban Board</span>
+              <span>Board</span>
             </Link>
             <Link
               to="/calendar"

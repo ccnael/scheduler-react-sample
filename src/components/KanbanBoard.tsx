@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { DataTable } from './DataTable';
+import { Input } from "@/components/ui/input";
 import {
   Accordion,
   AccordionContent,
@@ -26,7 +27,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Search } from "lucide-react";
 
 export const KanbanBoard = () => {
   const [cards, setCards] = useState([
@@ -40,6 +41,9 @@ export const KanbanBoard = () => {
   const [selectedCard, setSelectedCard] = useState<any>(null);
   const [inProgressCards, setInProgressCards] = useState<any[]>([]);
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [resourcesFilter, setResourcesFilter] = useState('');
+  const [availableJobsFilter, setAvailableJobsFilter] = useState('');
+  const [eventsFilter, setEventsFilter] = useState('');
 
   const handleDragStart = (cardId: number) => {
     setDraggedCard(cardId);
@@ -73,6 +77,16 @@ export const KanbanBoard = () => {
     }
   };
 
+  const filteredCards = cards.filter(card => 
+    card.title.toLowerCase().includes(availableJobsFilter.toLowerCase()) ||
+    card.description.toLowerCase().includes(availableJobsFilter.toLowerCase())
+  );
+
+  const filteredEvents = inProgressCards.filter(card =>
+    card.title.toLowerCase().includes(eventsFilter.toLowerCase()) ||
+    card.description.toLowerCase().includes(eventsFilter.toLowerCase())
+  );
+
   return (
     <div className="p-6 min-h-screen bg-gray-50">
       <h1 className="text-3xl font-bold text-gray-800 mb-8">Board</h1>
@@ -84,7 +98,18 @@ export const KanbanBoard = () => {
         >
           <div className="flex">
             <CollapsibleContent className="w-[250px] min-w-[250px] h-full bg-white p-4 border-r">
-              <OnlineUsers />
+              <div className="space-y-4">
+                <div className="relative">
+                  <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Filter resources..."
+                    value={resourcesFilter}
+                    onChange={(e) => setResourcesFilter(e.target.value)}
+                    className="pl-8"
+                  />
+                </div>
+                <OnlineUsers filterText={resourcesFilter} />
+              </div>
             </CollapsibleContent>
 
             <CollapsibleTrigger asChild>
@@ -102,22 +127,33 @@ export const KanbanBoard = () => {
         <ResizablePanelGroup direction="horizontal" className="flex-1">
           <ResizablePanel defaultSize={50}>
             <div className="h-full bg-white p-4">
-              <h2 className="text-xl font-semibold text-gray-700 mb-4">Available Jobs</h2>
-              <div className="grid auto-rows-max gap-3 justify-items-center" 
-                   style={{
-                     gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
-                     width: '100%'
-                   }}>
-                {cards.map((card) => (
-                  <Card
-                    key={card.id}
-                    {...card}
-                    draggable
-                    onDragStart={() => handleDragStart(card.id)}
-                    onDragEnd={handleDragEnd}
-                    isDragging={draggedCard === card.id}
+              <div className="space-y-4">
+                <div className="relative">
+                  <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Filter available jobs..."
+                    value={availableJobsFilter}
+                    onChange={(e) => setAvailableJobsFilter(e.target.value)}
+                    className="pl-8"
                   />
-                ))}
+                </div>
+                <h2 className="text-xl font-semibold text-gray-700">Available Jobs</h2>
+                <div className="grid auto-rows-max gap-3 justify-items-center" 
+                     style={{
+                       gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+                       width: '100%'
+                     }}>
+                  {filteredCards.map((card) => (
+                    <Card
+                      key={card.id}
+                      {...card}
+                      draggable
+                      onDragStart={() => handleDragStart(card.id)}
+                      onDragEnd={handleDragEnd}
+                      isDragging={draggedCard === card.id}
+                    />
+                  ))}
+                </div>
               </div>
             </div>
           </ResizablePanel>
@@ -130,18 +166,29 @@ export const KanbanBoard = () => {
               onDragOver={handleDragOver}
               onDrop={handleDrop}
             >
-              <h2 className="text-xl font-semibold text-gray-700 mb-4">Events</h2>
-              <div className="grid auto-rows-max gap-3 justify-items-center"
-                   style={{
-                     gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
-                     width: '100%'
-                   }}>
-                {inProgressCards.map((card) => (
-                  <Card
-                    key={card.id}
-                    {...card}
+              <div className="space-y-4">
+                <div className="relative">
+                  <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Filter events..."
+                    value={eventsFilter}
+                    onChange={(e) => setEventsFilter(e.target.value)}
+                    className="pl-8"
                   />
-                ))}
+                </div>
+                <h2 className="text-xl font-semibold text-gray-700">Events</h2>
+                <div className="grid auto-rows-max gap-3 justify-items-center"
+                     style={{
+                       gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+                       width: '100%'
+                     }}>
+                  {filteredEvents.map((card) => (
+                    <Card
+                      key={card.id}
+                      {...card}
+                    />
+                  ))}
+                </div>
               </div>
             </div>
           </ResizablePanel>
