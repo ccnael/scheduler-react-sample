@@ -44,7 +44,14 @@ const CalendarPage = () => {
               headerToolbar={{
                 left: "prev,next today",
                 center: "title",
-                right: "resourceTimelineDay,resourceTimelineWeek,resourceTimelineMonth"
+                right: "resourceTimelineDay,resourceTimelineThreeDay,resourceTimelineWeek,resourceTimelineMonth"
+              }}
+              views={{
+                resourceTimelineThreeDay: {
+                  type: 'resourceTimeline',
+                  duration: { days: 3 },
+                  buttonText: '3 days'
+                }
               }}
               height="100%"
             />
@@ -55,7 +62,7 @@ const CalendarPage = () => {
         
         <ResizablePanel defaultSize={20}>
           <div className="h-full p-4 bg-white">
-            <h2 className="text-xl font-semibold text-gray-700 mb-4">To Do</h2>
+            <h2 className="text-xl font-semibold text-gray-700 mb-4">Available Jobs</h2>
             <div className="space-y-4">
               {cards.map((card) => (
                 <Card

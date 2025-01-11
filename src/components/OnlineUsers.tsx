@@ -34,7 +34,7 @@ export const OnlineUsers = () => {
 
   return (
     <div className="space-y-4">
-      <h2 className="text-xl font-semibold text-gray-700">Team Members</h2>
+      <h2 className="text-xl font-semibold text-gray-700">Resources</h2>
       <Accordion type="multiple" defaultValue={["A", "B"]} className="w-full">
         {Object.entries(groupedUsers).map(([group, users]) => (
           <AccordionItem value={group} key={group}>

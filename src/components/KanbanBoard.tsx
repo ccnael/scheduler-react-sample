@@ -75,7 +75,7 @@ export const KanbanBoard = () => {
 
   return (
     <div className="p-6 min-h-screen bg-gray-50">
-      <h1 className="text-3xl font-bold text-gray-800 mb-8">Kanban Board</h1>
+      <h1 className="text-3xl font-bold text-gray-800 mb-8">Board</h1>
       <div className="flex min-h-[200px] rounded-lg border relative">
         <Collapsible
           open={!isCollapsed}
@@ -102,7 +102,7 @@ export const KanbanBoard = () => {
         <ResizablePanelGroup direction="horizontal" className="flex-1">
           <ResizablePanel defaultSize={50}>
             <div className="h-full bg-white p-4">
-              <h2 className="text-xl font-semibold text-gray-700 mb-4">To Do</h2>
+              <h2 className="text-xl font-semibold text-gray-700 mb-4">Available Jobs</h2>
               <div className="grid auto-rows-max gap-3 justify-items-center" 
                    style={{
                      gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
@@ -130,7 +130,7 @@ export const KanbanBoard = () => {
               onDragOver={handleDragOver}
               onDrop={handleDrop}
             >
-              <h2 className="text-xl font-semibold text-gray-700 mb-4">In Progress</h2>
+              <h2 className="text-xl font-semibold text-gray-700 mb-4">Events</h2>
               <div className="grid auto-rows-max gap-3 justify-items-center"
                    style={{
                      gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
