@@ -40,3 +40,8 @@
 .read-the-docs {
   color: #888;
 }
+
+/* Hide FullCalendar watermark */
+.fc-license-message {
+  display: none !important;
+}
