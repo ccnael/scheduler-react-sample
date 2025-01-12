@@ -44,13 +44,21 @@ import { cn } from "@/lib/utils";
 interface FilterState {
   titles: string[];
   descriptions: string[];
+  groups?: string[];
 }
 
 export const KanbanBoard = () => {
   const [cards, setCards] = useState([
-    { id: 1, title: 'Task 1', description: 'Complete the project setup' },
-    { id: 2, title: 'Task 2', description: 'Design the user interface' },
-    { id: 3, title: 'Task 3', description: 'Implement core features' },
+    { id: 1, title: 'Frontend Task', description: 'Complete the project setup', group: 'Development' },
+    { id: 2, title: 'UI Design', description: 'Design the user interface', group: 'Design' },
+    { id: 3, title: 'Backend Task', description: 'Implement core features', group: 'Development' },
+    { id: 4, title: 'Documentation', description: 'Write API documentation', group: 'Documentation' },
+    { id: 5, title: 'Testing', description: 'Perform unit testing', group: 'QA' },
+    { id: 6, title: 'Wireframes', description: 'Create wireframes for new features', group: 'Design' },
+    { id: 7, title: 'Database Setup', description: 'Configure database schema', group: 'Development' },
+    { id: 8, title: 'User Research', description: 'Conduct user interviews', group: 'Research' },
+    { id: 9, title: 'Security Audit', description: 'Perform security assessment', group: 'Security' },
+    { id: 10, title: 'Performance', description: 'Optimize application performance', group: 'Development' },
   ]);
 
   const [draggedCard, setDraggedCard] = useState<number | null>(null);
@@ -61,20 +69,24 @@ export const KanbanBoard = () => {
   
   const [resourcesFilter, setResourcesFilter] = useState<FilterState>({
     titles: [],
-    descriptions: []
+    descriptions: [],
+    groups: []
   });
   const [availableJobsFilter, setAvailableJobsFilter] = useState<FilterState>({
     titles: [],
-    descriptions: []
+    descriptions: [],
+    groups: []
   });
   const [eventsFilter, setEventsFilter] = useState<FilterState>({
     titles: [],
-    descriptions: []
+    descriptions: [],
+    groups: []
   });
 
-  // Initialize arrays with empty arrays as fallback
+  // Initialize arrays with empty arrays as fallback and include groups
   const uniqueTitles = Array.from(new Set(cards?.map(card => card.title) ?? []));
   const uniqueDescriptions = Array.from(new Set(cards?.map(card => card.description) ?? []));
+  const uniqueGroups = Array.from(new Set(cards?.map(card => card.group) ?? []));
 
   const handleDragStart = (cardId: number) => {
     setDraggedCard(cardId);
@@ -170,12 +182,14 @@ export const KanbanBoard = () => {
 
   const filteredCards = cards.filter(card => 
     (availableJobsFilter.titles.length === 0 || availableJobsFilter.titles.includes(card.title)) &&
-    (availableJobsFilter.descriptions.length === 0 || availableJobsFilter.descriptions.includes(card.description))
+    (availableJobsFilter.descriptions.length === 0 || availableJobsFilter.descriptions.includes(card.description)) &&
+    (availableJobsFilter.groups?.length === 0 || availableJobsFilter.groups?.includes(card.group ?? ''))
   );
 
   const filteredEvents = inProgressCards.filter(card =>
     (eventsFilter.titles.length === 0 || eventsFilter.titles.includes(card.title)) &&
-    (eventsFilter.descriptions.length === 0 || eventsFilter.descriptions.includes(card.description))
+    (eventsFilter.descriptions.length === 0 || eventsFilter.descriptions.includes(card.description)) &&
+    (eventsFilter.groups?.length === 0 || eventsFilter.groups?.includes(card.group ?? ''))
   );
 
   return (
@@ -202,6 +216,12 @@ export const KanbanBoard = () => {
                     selected={resourcesFilter.descriptions}
                     onChange={(value) => setResourcesFilter(prev => ({ ...prev, descriptions: value }))}
                     placeholder="Filter by description"
+                  />
+                  <MultiSelect
+                    options={uniqueGroups}
+                    selected={resourcesFilter.groups}
+                    onChange={(value) => setResourcesFilter(prev => ({ ...prev, groups: value }))}
+                    placeholder="Filter by group"
                   />
                 </div>
                 <OnlineUsers filterText={resourcesFilter.titles.join(' ')} />
@@ -236,6 +256,12 @@ export const KanbanBoard = () => {
                     selected={availableJobsFilter.descriptions}
                     onChange={(value) => setAvailableJobsFilter(prev => ({ ...prev, descriptions: value }))}
                     placeholder="Filter by description"
+                  />
+                  <MultiSelect
+                    options={uniqueGroups}
+                    selected={availableJobsFilter.groups}
+                    onChange={(value) => setAvailableJobsFilter(prev => ({ ...prev, groups: value }))}
+                    placeholder="Filter by group"
                   />
                 </div>
                 <h2 className="text-xl font-semibold text-gray-700">Available Jobs</h2>
@@ -280,6 +306,12 @@ export const KanbanBoard = () => {
                     selected={eventsFilter.descriptions}
                     onChange={(value) => setEventsFilter(prev => ({ ...prev, descriptions: value }))}
                     placeholder="Filter by description"
+                  />
+                  <MultiSelect
+                    options={uniqueGroups}
+                    selected={eventsFilter.groups}
+                    onChange={(value) => setEventsFilter(prev => ({ ...prev, groups: value }))}
+                    placeholder="Filter by group"
                   />
                 </div>
                 <h2 className="text-xl font-semibold text-gray-700">Events</h2>
