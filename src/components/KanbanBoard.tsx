@@ -73,8 +73,8 @@ export const KanbanBoard = () => {
   });
 
   // Initialize arrays with empty arrays as fallback
-  const uniqueTitles = Array.from(new Set(cards?.map(card => card.title) || []));
-  const uniqueDescriptions = Array.from(new Set(cards?.map(card => card.description) || []));
+  const uniqueTitles = Array.from(new Set(cards?.map(card => card.title) ?? []));
+  const uniqueDescriptions = Array.from(new Set(cards?.map(card => card.description) ?? []));
 
   const handleDragStart = (cardId: number) => {
     setDraggedCard(cardId);
