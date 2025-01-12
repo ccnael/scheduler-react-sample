@@ -73,8 +73,8 @@ export const KanbanBoard = () => {
   });
 
   // Ensure we have arrays before using Array.from
-  const uniqueTitles = cards ? Array.from(new Set(cards.map(card => card.title))) : [];
-  const uniqueDescriptions = cards ? Array.from(new Set(cards.map(card => card.description))) : [];
+  const uniqueTitles = Array.from(new Set(cards.map(card => card.title)));
+  const uniqueDescriptions = Array.from(new Set(cards.map(card => card.description)));
 
   const handleDragStart = (cardId: number) => {
     setDraggedCard(cardId);
@@ -141,7 +141,7 @@ export const KanbanBoard = () => {
             <CommandInput placeholder={`Search ${placeholder.toLowerCase()}...`} />
             <CommandEmpty>No results found.</CommandEmpty>
             <CommandGroup>
-              {(options || []).map((option) => (
+              {options.map((option) => (
                 <CommandItem
                   key={option}
                   onSelect={() => {
@@ -328,3 +328,4 @@ export const KanbanBoard = () => {
       </Dialog>
     </div>
   );
+};
