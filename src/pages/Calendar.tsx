@@ -6,28 +6,57 @@ import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/componen
 
 const CalendarPage = () => {
   const [resources] = useState([
-    { id: "a", title: "Resource A" },
-    { id: "b", title: "Resource B" },
-    { id: "c", title: "Resource C" },
+    { id: "dev1", title: "John Doe", group: "Development" },
+    { id: "des1", title: "Jane Smith", group: "Design" },
+    { id: "dev2", title: "Bob Johnson", group: "Development" },
+    { id: "qa1", title: "Alice Williams", group: "QA" },
+    { id: "doc1", title: "Charlie Brown", group: "Documentation" },
+    { id: "des2", title: "Diana Prince", group: "Design" },
+    { id: "dev3", title: "Edward Stone", group: "Development" },
+    { id: "res1", title: "Fiona Apple", group: "Research" },
+    { id: "sec1", title: "George Miller", group: "Security" },
+    { id: "dev4", title: "Helen Carter", group: "Development" },
   ]);
 
   const [events] = useState([
     {
-      title: "Event 1",
+      title: "Project Planning",
       start: new Date(),
-      resourceId: "a",
+      resourceId: "dev1",
+      group: "Development"
     },
     {
-      title: "Event 2",
+      title: "Design Review",
       start: new Date(new Date().setDate(new Date().getDate() + 1)),
-      resourceId: "b",
+      resourceId: "des1",
+      group: "Design"
     },
+    {
+      title: "QA Testing",
+      start: new Date(new Date().setDate(new Date().getDate() + 2)),
+      resourceId: "qa1",
+      group: "QA"
+    },
+    {
+      title: "Documentation",
+      start: new Date(new Date().setDate(new Date().getDate() + 1)),
+      resourceId: "doc1",
+      group: "Documentation"
+    },
+    {
+      title: "Security Audit",
+      start: new Date(new Date().setDate(new Date().getDate() + 3)),
+      resourceId: "sec1",
+      group: "Security"
+    }
   ]);
 
   const [cards] = useState([
-    { id: 1, title: 'Task 1', description: 'Complete the project setup' },
-    { id: 2, title: 'Task 2', description: 'Design the user interface' },
-    { id: 3, title: 'Task 3', description: 'Implement core features' },
+    { id: 1, title: 'Task 1', description: 'Complete the project setup', group: 'Development' },
+    { id: 2, title: 'Task 2', description: 'Design the user interface', group: 'Design' },
+    { id: 3, title: 'Task 3', description: 'Implement core features', group: 'Development' },
+    { id: 4, title: 'Task 4', description: 'QA Testing', group: 'QA' },
+    { id: 5, title: 'Task 5', description: 'Write documentation', group: 'Documentation' },
   ]);
 
   return (
@@ -56,6 +85,7 @@ const CalendarPage = () => {
                 }
               }}
               height="100%"
+              resourceGroupField="group"
             />
           </div>
         </ResizablePanel>
