@@ -26,7 +26,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { ChevronRight, Check } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import {
   Command,
   CommandEmpty,
@@ -40,6 +40,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
+import { Check } from "lucide-react";
 
 interface FilterState {
   titles: string[];
@@ -61,6 +62,9 @@ export const Board = () => {
     { id: 3, title: 'Backend Task', description: 'Implement core features', group: 'Development' },
     { id: 4, title: 'Documentation', description: 'Write API documentation', group: 'Documentation' },
     { id: 5, title: 'Testing', description: 'Perform unit testing', group: 'QA' },
+    { id: 6, title: 'Database Design', description: 'Design database schema', group: 'Development' },
+    { id: 7, title: 'UX Research', description: 'Conduct user research', group: 'Design' },
+    { id: 8, title: 'Security Audit', description: 'Perform security checks', group: 'Security' },
   ]);
 
   const [draggedCard, setDraggedCard] = useState<number | null>(null);
@@ -85,7 +89,6 @@ export const Board = () => {
     groups: []
   });
 
-  // Initialize arrays with empty arrays as fallback
   const uniqueTitles = Array.from(new Set(cards?.map(card => card.title) ?? []));
   const uniqueDescriptions = Array.from(new Set(cards?.map(card => card.description) ?? []));
   const uniqueGroups = Array.from(new Set(cards?.map(card => card.group).filter(Boolean) ?? []));
@@ -194,6 +197,15 @@ export const Board = () => {
     (eventsFilter.groups?.length === 0 || eventsFilter.groups?.includes(card.group ?? ''))
   );
 
+  const groupedCards = cards.reduce((acc, card) => {
+    const group = card.group || 'Ungrouped';
+    if (!acc[group]) {
+      acc[group] = [];
+    }
+    acc[group].push(card);
+    return acc;
+  }, {} as Record<string, Card[]>);
+
   return (
     <div className="p-6 min-h-screen bg-gray-50">
       <h1 className="text-3xl font-bold text-gray-800 mb-8">Board</h1>
@@ -221,7 +233,7 @@ export const Board = () => {
                   />
                   <MultiSelect
                     options={uniqueGroups}
-                    selected={resourcesFilter.groups}
+                    selected={resourcesFilter.groups ?? []}
                     onChange={(value) => setResourcesFilter(prev => ({ ...prev, groups: value }))}
                     placeholder="Filter by group"
                   />
@@ -261,28 +273,45 @@ export const Board = () => {
                   />
                   <MultiSelect
                     options={uniqueGroups}
-                    selected={availableJobsFilter.groups}
+                    selected={availableJobsFilter.groups ?? []}
                     onChange={(value) => setAvailableJobsFilter(prev => ({ ...prev, groups: value }))}
                     placeholder="Filter by group"
                   />
                 </div>
                 <h2 className="text-xl font-semibold text-gray-700">Available Jobs</h2>
-                <div className="grid auto-rows-max gap-3 justify-items-center" 
-                     style={{
-                       gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
-                       width: '100%'
-                     }}>
-                  {filteredCards.map((card) => (
-                    <Card
-                      key={card.id}
-                      {...card}
-                      draggable
-                      onDragStart={() => handleDragStart(card.id)}
-                      onDragEnd={handleDragEnd}
-                      isDragging={draggedCard === card.id}
-                    />
+                <Accordion type="multiple" className="w-full">
+                  {Object.entries(groupedCards).map(([group, groupCards]) => (
+                    <AccordionItem value={group} key={group}>
+                      <AccordionTrigger className="text-lg font-medium">
+                        {group} ({groupCards.length})
+                      </AccordionTrigger>
+                      <AccordionContent>
+                        <div className="grid auto-rows-max gap-3 justify-items-center"
+                             style={{
+                               gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+                               width: '100%'
+                             }}>
+                          {groupCards
+                            .filter(card =>
+                              (availableJobsFilter.titles.length === 0 || availableJobsFilter.titles.includes(card.title)) &&
+                              (availableJobsFilter.descriptions.length === 0 || availableJobsFilter.descriptions.includes(card.description)) &&
+                              (availableJobsFilter.groups?.length === 0 || availableJobsFilter.groups?.includes(card.group ?? ''))
+                            )
+                            .map((card) => (
+                              <Card
+                                key={card.id}
+                                {...card}
+                                draggable
+                                onDragStart={() => handleDragStart(card.id)}
+                                onDragEnd={handleDragEnd}
+                                isDragging={draggedCard === card.id}
+                              />
+                            ))}
+                        </div>
+                      </AccordionContent>
+                    </AccordionItem>
                   ))}
-                </div>
+                </Accordion>
               </div>
             </div>
           </ResizablePanel>
@@ -311,7 +340,7 @@ export const Board = () => {
                   />
                   <MultiSelect
                     options={uniqueGroups}
-                    selected={eventsFilter.groups}
+                    selected={eventsFilter.groups ?? []}
                     onChange={(value) => setEventsFilter(prev => ({ ...prev, groups: value }))}
                     placeholder="Filter by group"
                   />
