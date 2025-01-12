@@ -15,7 +15,6 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { DataTable } from './DataTable';
-import { Input } from "@/components/ui/input";
 import {
   Accordion,
   AccordionContent,
@@ -27,11 +26,24 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { ChevronRight, Search } from "lucide-react";
+import { ChevronRight, Search, Check } from "lucide-react";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
 
 interface FilterState {
-  title: string;
-  description: string;
+  titles: string[];
+  descriptions: string[];
 }
 
 export const KanbanBoard = () => {
@@ -47,19 +59,21 @@ export const KanbanBoard = () => {
   const [inProgressCards, setInProgressCards] = useState<any[]>([]);
   const [isCollapsed, setIsCollapsed] = useState(false);
   
-  // Multiple filters for each section
   const [resourcesFilter, setResourcesFilter] = useState<FilterState>({
-    title: '',
-    description: ''
+    titles: [],
+    descriptions: []
   });
   const [availableJobsFilter, setAvailableJobsFilter] = useState<FilterState>({
-    title: '',
-    description: ''
+    titles: [],
+    descriptions: []
   });
   const [eventsFilter, setEventsFilter] = useState<FilterState>({
-    title: '',
-    description: ''
+    titles: [],
+    descriptions: []
   });
+
+  const uniqueTitles = Array.from(new Set(cards.map(card => card.title)));
+  const uniqueDescriptions = Array.from(new Set(cards.map(card => card.description)));
 
   const handleDragStart = (cardId: number) => {
     setDraggedCard(cardId);
@@ -93,14 +107,74 @@ export const KanbanBoard = () => {
     }
   };
 
+  const MultiSelect = ({ 
+    options, 
+    selected, 
+    onChange, 
+    placeholder 
+  }: { 
+    options: string[], 
+    selected: string[], 
+    onChange: (value: string[]) => void,
+    placeholder: string 
+  }) => {
+    const [open, setOpen] = useState(false);
+
+    return (
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>
+          <Button
+            variant="outline"
+            role="combobox"
+            aria-expanded={open}
+            className="w-full justify-between"
+          >
+            {selected.length === 0
+              ? placeholder
+              : `${selected.length} selected`}
+            <ChevronRight className={`ml-2 h-4 w-4 shrink-0 transition-transform ${open ? 'rotate-90' : ''}`} />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-full p-0">
+          <Command>
+            <CommandInput placeholder={`Search ${placeholder.toLowerCase()}...`} />
+            <CommandEmpty>No results found.</CommandEmpty>
+            <CommandGroup>
+              {options.map((option) => (
+                <CommandItem
+                  key={option}
+                  onSelect={() => {
+                    onChange(
+                      selected.includes(option)
+                        ? selected.filter((item) => item !== option)
+                        : [...selected, option]
+                    );
+                  }}
+                >
+                  <Check
+                    className={cn(
+                      "mr-2 h-4 w-4",
+                      selected.includes(option) ? "opacity-100" : "opacity-0"
+                    )}
+                  />
+                  {option}
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          </Command>
+        </PopoverContent>
+      </Popover>
+    );
+  };
+
   const filteredCards = cards.filter(card => 
-    card.title.toLowerCase().includes(availableJobsFilter.title.toLowerCase()) &&
-    card.description.toLowerCase().includes(availableJobsFilter.description.toLowerCase())
+    (availableJobsFilter.titles.length === 0 || availableJobsFilter.titles.includes(card.title)) &&
+    (availableJobsFilter.descriptions.length === 0 || availableJobsFilter.descriptions.includes(card.description))
   );
 
   const filteredEvents = inProgressCards.filter(card =>
-    card.title.toLowerCase().includes(eventsFilter.title.toLowerCase()) &&
-    card.description.toLowerCase().includes(eventsFilter.description.toLowerCase())
+    (eventsFilter.titles.length === 0 || eventsFilter.titles.includes(card.title)) &&
+    (eventsFilter.descriptions.length === 0 || eventsFilter.descriptions.includes(card.description))
   );
 
   return (
@@ -116,26 +190,20 @@ export const KanbanBoard = () => {
             <CollapsibleContent className="w-[250px] min-w-[250px] h-full bg-white p-4 border-r">
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <div className="relative">
-                    <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      placeholder="Filter by name..."
-                      value={resourcesFilter.title}
-                      onChange={(e) => setResourcesFilter(prev => ({ ...prev, title: e.target.value }))}
-                      className="pl-8"
-                    />
-                  </div>
-                  <div className="relative">
-                    <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      placeholder="Filter by description..."
-                      value={resourcesFilter.description}
-                      onChange={(e) => setResourcesFilter(prev => ({ ...prev, description: e.target.value }))}
-                      className="pl-8"
-                    />
-                  </div>
+                  <MultiSelect
+                    options={uniqueTitles}
+                    selected={resourcesFilter.titles}
+                    onChange={(value) => setResourcesFilter(prev => ({ ...prev, titles: value }))}
+                    placeholder="Filter by title"
+                  />
+                  <MultiSelect
+                    options={uniqueDescriptions}
+                    selected={resourcesFilter.descriptions}
+                    onChange={(value) => setResourcesFilter(prev => ({ ...prev, descriptions: value }))}
+                    placeholder="Filter by description"
+                  />
                 </div>
-                <OnlineUsers filterText={resourcesFilter.title} />
+                <OnlineUsers filterText={resourcesFilter.titles.join(' ')} />
               </div>
             </CollapsibleContent>
 
@@ -156,24 +224,18 @@ export const KanbanBoard = () => {
             <div className="h-full bg-white p-4">
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <div className="relative">
-                    <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      placeholder="Filter jobs by title..."
-                      value={availableJobsFilter.title}
-                      onChange={(e) => setAvailableJobsFilter(prev => ({ ...prev, title: e.target.value }))}
-                      className="pl-8"
-                    />
-                  </div>
-                  <div className="relative">
-                    <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      placeholder="Filter jobs by description..."
-                      value={availableJobsFilter.description}
-                      onChange={(e) => setAvailableJobsFilter(prev => ({ ...prev, description: e.target.value }))}
-                      className="pl-8"
-                    />
-                  </div>
+                  <MultiSelect
+                    options={uniqueTitles}
+                    selected={availableJobsFilter.titles}
+                    onChange={(value) => setAvailableJobsFilter(prev => ({ ...prev, titles: value }))}
+                    placeholder="Filter by title"
+                  />
+                  <MultiSelect
+                    options={uniqueDescriptions}
+                    selected={availableJobsFilter.descriptions}
+                    onChange={(value) => setAvailableJobsFilter(prev => ({ ...prev, descriptions: value }))}
+                    placeholder="Filter by description"
+                  />
                 </div>
                 <h2 className="text-xl font-semibold text-gray-700">Available Jobs</h2>
                 <div className="grid auto-rows-max gap-3 justify-items-center" 
@@ -206,24 +268,18 @@ export const KanbanBoard = () => {
             >
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <div className="relative">
-                    <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      placeholder="Filter events by title..."
-                      value={eventsFilter.title}
-                      onChange={(e) => setEventsFilter(prev => ({ ...prev, title: e.target.value }))}
-                      className="pl-8"
-                    />
-                  </div>
-                  <div className="relative">
-                    <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      placeholder="Filter events by description..."
-                      value={eventsFilter.description}
-                      onChange={(e) => setEventsFilter(prev => ({ ...prev, description: e.target.value }))}
-                      className="pl-8"
-                    />
-                  </div>
+                  <MultiSelect
+                    options={uniqueTitles}
+                    selected={eventsFilter.titles}
+                    onChange={(value) => setEventsFilter(prev => ({ ...prev, titles: value }))}
+                    placeholder="Filter by title"
+                  />
+                  <MultiSelect
+                    options={uniqueDescriptions}
+                    selected={eventsFilter.descriptions}
+                    onChange={(value) => setEventsFilter(prev => ({ ...prev, descriptions: value }))}
+                    placeholder="Filter by description"
+                  />
                 </div>
                 <h2 className="text-xl font-semibold text-gray-700">Events</h2>
                 <div className="grid auto-rows-max gap-3 justify-items-center"
