@@ -26,7 +26,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { ChevronRight, Search, Check } from "lucide-react";
+import { ChevronRight, Check } from "lucide-react";
 import {
   Command,
   CommandEmpty,
@@ -47,24 +47,26 @@ interface FilterState {
   groups?: string[];
 }
 
-export const KanbanBoard = () => {
-  const [cards, setCards] = useState([
+interface Card {
+  id: number;
+  title: string;
+  description: string;
+  group?: string;
+}
+
+export const Board = () => {
+  const [cards, setCards] = useState<Card[]>([
     { id: 1, title: 'Frontend Task', description: 'Complete the project setup', group: 'Development' },
     { id: 2, title: 'UI Design', description: 'Design the user interface', group: 'Design' },
     { id: 3, title: 'Backend Task', description: 'Implement core features', group: 'Development' },
     { id: 4, title: 'Documentation', description: 'Write API documentation', group: 'Documentation' },
     { id: 5, title: 'Testing', description: 'Perform unit testing', group: 'QA' },
-    { id: 6, title: 'Wireframes', description: 'Create wireframes for new features', group: 'Design' },
-    { id: 7, title: 'Database Setup', description: 'Configure database schema', group: 'Development' },
-    { id: 8, title: 'User Research', description: 'Conduct user interviews', group: 'Research' },
-    { id: 9, title: 'Security Audit', description: 'Perform security assessment', group: 'Security' },
-    { id: 10, title: 'Performance', description: 'Optimize application performance', group: 'Development' },
   ]);
 
   const [draggedCard, setDraggedCard] = useState<number | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedCard, setSelectedCard] = useState<any>(null);
-  const [inProgressCards, setInProgressCards] = useState<any[]>([]);
+  const [selectedCard, setSelectedCard] = useState<Card | null>(null);
+  const [inProgressCards, setInProgressCards] = useState<Card[]>([]);
   const [isCollapsed, setIsCollapsed] = useState(false);
   
   const [resourcesFilter, setResourcesFilter] = useState<FilterState>({
@@ -83,10 +85,10 @@ export const KanbanBoard = () => {
     groups: []
   });
 
-  // Initialize arrays with empty arrays as fallback and include groups
+  // Initialize arrays with empty arrays as fallback
   const uniqueTitles = Array.from(new Set(cards?.map(card => card.title) ?? []));
   const uniqueDescriptions = Array.from(new Set(cards?.map(card => card.description) ?? []));
-  const uniqueGroups = Array.from(new Set(cards?.map(card => card.group) ?? []));
+  const uniqueGroups = Array.from(new Set(cards?.map(card => card.group).filter(Boolean) ?? []));
 
   const handleDragStart = (cardId: number) => {
     setDraggedCard(cardId);
@@ -121,8 +123,8 @@ export const KanbanBoard = () => {
   };
 
   const MultiSelect = ({ 
-    options = [], // Provide default empty array
-    selected = [], // Provide default empty array
+    options = [], 
+    selected = [], 
     onChange, 
     placeholder 
   }: { 
@@ -153,7 +155,7 @@ export const KanbanBoard = () => {
             <CommandInput placeholder={`Search ${placeholder.toLowerCase()}...`} />
             <CommandEmpty>No results found.</CommandEmpty>
             <CommandGroup>
-              {options.map((option) => (
+              {(options || []).map((option) => (
                 <CommandItem
                   key={option}
                   onSelect={() => {
