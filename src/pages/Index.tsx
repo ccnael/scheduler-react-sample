@@ -1,7 +1,7 @@
-import { KanbanBoard } from "@/components/KanbanBoard";
+import { KanbanBoard as Board } from "@/components/Board";
 
 const Index = () => {
-  return <KanbanBoard />;
+  return <Board />;
 };
 
 export default Index;
