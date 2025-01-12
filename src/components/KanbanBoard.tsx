@@ -72,9 +72,9 @@ export const KanbanBoard = () => {
     descriptions: []
   });
 
-  // Ensure we have arrays before using Array.from
-  const uniqueTitles = Array.from(new Set(cards.map(card => card.title)));
-  const uniqueDescriptions = Array.from(new Set(cards.map(card => card.description)));
+  // Initialize arrays with empty arrays as fallback
+  const uniqueTitles = Array.from(new Set(cards?.map(card => card.title) || []));
+  const uniqueDescriptions = Array.from(new Set(cards?.map(card => card.description) || []));
 
   const handleDragStart = (cardId: number) => {
     setDraggedCard(cardId);
@@ -109,8 +109,8 @@ export const KanbanBoard = () => {
   };
 
   const MultiSelect = ({ 
-    options, 
-    selected, 
+    options = [], // Provide default empty array
+    selected = [], // Provide default empty array
     onChange, 
     placeholder 
   }: { 
