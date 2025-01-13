@@ -1,11 +1,19 @@
 import React, { useState } from 'react';
 import { Card } from './Card';
-import { OnlineUsers } from './OnlineUsers';
+import { Resources } from './Resources';
 import {
   ResizablePanelGroup,
   ResizablePanel,
   ResizableHandle,
 } from "@/components/ui/resizable";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import { Button } from "@/components/ui/button";
+import { MultiSelect } from './MultiSelect';
+import { ChevronRight } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -13,7 +21,6 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import { DataTable } from './DataTable';
 import {
   Accordion,
@@ -21,50 +28,25 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-import { ChevronRight } from "lucide-react";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-} from "@/components/ui/command";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
-import { Check } from "lucide-react";
 
 interface FilterState {
   titles: string[];
   descriptions: string[];
-  groups?: string[];
 }
 
 interface Card {
   id: number;
   title: string;
   description: string;
-  group?: string;
 }
 
 export const Board = () => {
   const [cards, setCards] = useState<Card[]>([
-    { id: 1, title: 'Frontend Task', description: 'Complete the project setup', group: 'Development' },
-    { id: 2, title: 'UI Design', description: 'Design the user interface', group: 'Design' },
-    { id: 3, title: 'Backend Task', description: 'Implement core features', group: 'Development' },
-    { id: 4, title: 'Documentation', description: 'Write API documentation', group: 'Documentation' },
-    { id: 5, title: 'Testing', description: 'Perform unit testing', group: 'QA' },
-    { id: 6, title: 'Database Design', description: 'Design database schema', group: 'Development' },
-    { id: 7, title: 'UX Research', description: 'Conduct user research', group: 'Design' },
-    { id: 8, title: 'Security Audit', description: 'Perform security checks', group: 'Security' },
+    { id: 1, title: 'Frontend Task', description: 'Complete the project setup' },
+    { id: 2, title: 'UI Design', description: 'Design the user interface' },
+    { id: 3, title: 'Backend Task', description: 'Implement core features' },
+    { id: 4, title: 'Documentation', description: 'Write API documentation' },
+    { id: 5, title: 'Testing', description: 'Perform unit testing' },
   ]);
 
   const [draggedCard, setDraggedCard] = useState<number | null>(null);
@@ -76,22 +58,14 @@ export const Board = () => {
   const [resourcesFilter, setResourcesFilter] = useState<FilterState>({
     titles: [],
     descriptions: [],
-    groups: []
   });
   const [availableJobsFilter, setAvailableJobsFilter] = useState<FilterState>({
     titles: [],
     descriptions: [],
-    groups: []
-  });
-  const [eventsFilter, setEventsFilter] = useState<FilterState>({
-    titles: [],
-    descriptions: [],
-    groups: []
   });
 
   const uniqueTitles = Array.from(new Set(cards?.map(card => card.title) ?? []));
   const uniqueDescriptions = Array.from(new Set(cards?.map(card => card.description) ?? []));
-  const uniqueGroups = Array.from(new Set(cards?.map(card => card.group).filter(Boolean) ?? []));
 
   const handleDragStart = (cardId: number) => {
     setDraggedCard(cardId);
@@ -125,85 +99,6 @@ export const Board = () => {
     }
   };
 
-  const MultiSelect = ({ 
-    options = [], 
-    selected = [], 
-    onChange, 
-    placeholder 
-  }: { 
-    options: string[], 
-    selected: string[], 
-    onChange: (value: string[]) => void,
-    placeholder: string 
-  }) => {
-    const [open, setOpen] = useState(false);
-
-    return (
-      <Popover open={open} onOpenChange={setOpen}>
-        <PopoverTrigger asChild>
-          <Button
-            variant="outline"
-            role="combobox"
-            aria-expanded={open}
-            className="w-full justify-between"
-          >
-            {selected.length === 0
-              ? placeholder
-              : `${selected.length} selected`}
-            <ChevronRight className={`ml-2 h-4 w-4 shrink-0 transition-transform ${open ? 'rotate-90' : ''}`} />
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent className="w-full p-0">
-          <Command>
-            <CommandInput placeholder={`Search ${placeholder.toLowerCase()}...`} />
-            <CommandEmpty>No results found.</CommandEmpty>
-            <CommandGroup>
-              {(options || []).map((option) => (
-                <CommandItem
-                  key={option}
-                  onSelect={() => {
-                    onChange(
-                      selected.includes(option)
-                        ? selected.filter((item) => item !== option)
-                        : [...selected, option]
-                    );
-                  }}
-                >
-                  <Check
-                    className={cn(
-                      "mr-2 h-4 w-4",
-                      selected.includes(option) ? "opacity-100" : "opacity-0"
-                    )}
-                  />
-                  {option}
-                </CommandItem>
-              ))}
-            </CommandGroup>
-          </Command>
-        </PopoverContent>
-      </Popover>
-    );
-  };
-
-  const filteredCards = cards.filter(card => 
-    (availableJobsFilter.titles.length === 0 || availableJobsFilter.titles.includes(card.title)) &&
-    (availableJobsFilter.descriptions.length === 0 || availableJobsFilter.descriptions.includes(card.description))
-  );
-
-  const filteredEvents = inProgressCards.filter(card =>
-    (eventsFilter.titles.length === 0 || eventsFilter.titles.includes(card.title)) &&
-    (eventsFilter.descriptions.length === 0 || eventsFilter.descriptions.includes(card.description))
-  );
-
-  const groupedCards = cards.reduce((acc, card) => {
-    const group = card.group || 'Ungrouped';
-    if (!acc[group]) {
-      acc[group] = [];
-    }
-    acc[group].push(card);
-    return acc;
-  }, {} as Record<string, Card[]>);
-
   return (
     <div className="p-6 min-h-screen bg-gray-50">
       <h1 className="text-3xl font-bold text-gray-800 mb-8">Board</h1>
@@ -215,61 +110,7 @@ export const Board = () => {
         >
           <div className="flex">
             <CollapsibleContent className="w-[250px] min-w-[250px] h-full bg-white p-4 border-r">
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <MultiSelect
-                    options={uniqueTitles}
-                    selected={resourcesFilter.titles}
-                    onChange={(value) => setResourcesFilter(prev => ({ ...prev, titles: value }))}
-                    placeholder="Filter by title"
-                  />
-                  <MultiSelect
-                    options={uniqueDescriptions}
-                    selected={resourcesFilter.descriptions}
-                    onChange={(value) => setResourcesFilter(prev => ({ ...prev, descriptions: value }))}
-                    placeholder="Filter by description"
-                  />
-                  <MultiSelect
-                    options={uniqueGroups}
-                    selected={resourcesFilter.groups ?? []}
-                    onChange={(value) => setResourcesFilter(prev => ({ ...prev, groups: value }))}
-                    placeholder="Filter by group"
-                  />
-                </div>
-                <Accordion type="multiple" className="w-full">
-                  {Object.entries(groupedCards).map(([group, groupCards]) => (
-                    <AccordionItem value={group} key={group}>
-                      <AccordionTrigger className="text-lg font-medium">
-                        {group} ({groupCards.length})
-                      </AccordionTrigger>
-                      <AccordionContent>
-                        <div className="grid auto-rows-max gap-3 justify-items-center"
-                             style={{
-                               gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
-                               width: '100%'
-                             }}>
-                          {groupCards
-                            .filter(card =>
-                              (resourcesFilter.titles.length === 0 || resourcesFilter.titles.includes(card.title)) &&
-                              (resourcesFilter.descriptions.length === 0 || resourcesFilter.descriptions.includes(card.description))
-                            )
-                            .map((card) => (
-                              <Card
-                                key={card.id}
-                                {...card}
-                                draggable
-                                onDragStart={() => handleDragStart(card.id)}
-                                onDragEnd={handleDragEnd}
-                                isDragging={draggedCard === card.id}
-                              />
-                            ))}
-                        </div>
-                      </AccordionContent>
-                    </AccordionItem>
-                  ))}
-                </Accordion>
-                <OnlineUsers filterText={resourcesFilter.titles.join(' ')} />
-              </div>
+              <Resources filterText={resourcesFilter.titles.join(' ')} />
             </CollapsibleContent>
 
             <CollapsibleTrigger asChild>
@@ -308,7 +149,10 @@ export const Board = () => {
                        gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
                        width: '100%'
                      }}>
-                  {filteredCards.map((card) => (
+                  {cards.filter(card => 
+                    (availableJobsFilter.titles.length === 0 || availableJobsFilter.titles.includes(card.title)) &&
+                    (availableJobsFilter.descriptions.length === 0 || availableJobsFilter.descriptions.includes(card.description))
+                  ).map((card) => (
                     <Card
                       key={card.id}
                       {...card}
@@ -332,27 +176,13 @@ export const Board = () => {
               onDrop={handleDrop}
             >
               <div className="space-y-4">
-                <div className="space-y-2">
-                  <MultiSelect
-                    options={uniqueTitles}
-                    selected={eventsFilter.titles}
-                    onChange={(value) => setEventsFilter(prev => ({ ...prev, titles: value }))}
-                    placeholder="Filter by title"
-                  />
-                  <MultiSelect
-                    options={uniqueDescriptions}
-                    selected={eventsFilter.descriptions}
-                    onChange={(value) => setEventsFilter(prev => ({ ...prev, descriptions: value }))}
-                    placeholder="Filter by description"
-                  />
-                </div>
-                <h2 className="text-xl font-semibold text-gray-700">Events</h2>
+                <h2 className="text-xl font-semibold text-gray-700">In Progress</h2>
                 <div className="grid auto-rows-max gap-3 justify-items-center"
                      style={{
                        gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
                        width: '100%'
                      }}>
-                  {filteredEvents.map((card) => (
+                  {inProgressCards.map((card) => (
                     <Card
                       key={card.id}
                       {...card}
