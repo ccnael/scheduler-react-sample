@@ -1,10 +1,20 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Filter } from "lucide-react";
+import { MultiSelect } from './MultiSelect';
 
 interface User {
   id: number;
@@ -18,6 +28,10 @@ interface ResourcesProps {
 }
 
 export const Resources: React.FC<ResourcesProps> = ({ filterText }) => {
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [selectedGroups, setSelectedGroups] = useState<string[]>([]);
+  const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
+
   const users: User[] = [
     { id: 1, name: 'John Doe', status: 'online', group: 'Development' },
     { id: 2, name: 'Jane Smith', status: 'offline', group: 'Design' },
@@ -32,7 +46,9 @@ export const Resources: React.FC<ResourcesProps> = ({ filterText }) => {
   ];
 
   const filteredUsers = users.filter(user =>
-    user.name.toLowerCase().includes(filterText.toLowerCase())
+    user.name.toLowerCase().includes(filterText.toLowerCase()) &&
+    (selectedGroups.length === 0 || selectedGroups.includes(user.group)) &&
+    (selectedStatuses.length === 0 || selectedStatuses.includes(user.status))
   );
 
   const groupedUsers = filteredUsers.reduce((acc, user) => {
@@ -44,10 +60,54 @@ export const Resources: React.FC<ResourcesProps> = ({ filterText }) => {
     return acc;
   }, {} as Record<string, User[]>);
 
+  const uniqueGroups = Array.from(new Set(users.map(user => user.group)));
+  const uniqueStatuses = ['online', 'offline'];
+
+  // Get all group values for the defaultValue
+  const defaultExpandedGroups = Object.keys(groupedUsers);
+
   return (
     <div className="space-y-4">
-      <h2 className="text-lg font-semibold mb-4">Resources</h2>
-      <Accordion type="multiple" className="w-full space-y-2">
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-lg font-semibold">Resources</h2>
+        <Dialog open={isFilterOpen} onOpenChange={setIsFilterOpen}>
+          <DialogTrigger asChild>
+            <Button variant="outline" size="icon">
+              <Filter className="h-4 w-4" />
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Filter Resources</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Filter by Group</label>
+                <MultiSelect
+                  options={uniqueGroups}
+                  selected={selectedGroups}
+                  onChange={setSelectedGroups}
+                  placeholder="Select groups"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Filter by Status</label>
+                <MultiSelect
+                  options={uniqueStatuses}
+                  selected={selectedStatuses}
+                  onChange={setSelectedStatuses}
+                  placeholder="Select status"
+                />
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+      </div>
+      <Accordion 
+        type="multiple" 
+        className="w-full space-y-2"
+        defaultValue={defaultExpandedGroups}
+      >
         {Object.entries(groupedUsers).map(([group, users]) => (
           <AccordionItem key={group} value={group} className="border rounded-lg">
             <AccordionTrigger className="px-4">
