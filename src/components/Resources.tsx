@@ -1,4 +1,10 @@
 import React from 'react';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 interface User {
   id: number;
@@ -40,20 +46,30 @@ export const Resources: React.FC<ResourcesProps> = ({ filterText }) => {
 
   return (
     <div className="space-y-4">
-      {Object.entries(groupedUsers).map(([group, users]) => (
-        <div key={group} className="space-y-2">
-          <h3 className="text-sm font-semibold text-gray-700 border-b pb-1">{group}</h3>
-          {users.map(user => (
-            <div key={user.id} className="flex items-center justify-between p-2 hover:bg-gray-50 rounded-md">
-              <div className="flex items-center space-x-2">
-                <div className={`w-2 h-2 rounded-full ${user.status === 'online' ? 'bg-green-500' : 'bg-gray-400'}`} />
-                <span className="text-sm font-medium">{user.name}</span>
-              </div>
-              <span className="text-xs text-gray-500">{user.status}</span>
-            </div>
-          ))}
-        </div>
-      ))}
+      <h2 className="text-lg font-semibold mb-4">Resources</h2>
+      <Accordion type="multiple" className="w-full space-y-2">
+        {Object.entries(groupedUsers).map(([group, users]) => (
+          <AccordionItem key={group} value={group} className="border rounded-lg">
+            <AccordionTrigger className="px-4">
+              <span className="text-sm font-semibold">{group}</span>
+            </AccordionTrigger>
+            <AccordionContent className="space-y-1 px-2">
+              {users.map(user => (
+                <div 
+                  key={user.id} 
+                  className="flex items-center justify-between p-2 hover:bg-gray-50 rounded-md"
+                >
+                  <div className="flex items-center space-x-2">
+                    <div className={`w-2 h-2 rounded-full ${user.status === 'online' ? 'bg-green-500' : 'bg-gray-400'}`} />
+                    <span className="text-sm font-medium">{user.name}</span>
+                  </div>
+                  <span className="text-xs text-gray-500">{user.status}</span>
+                </div>
+              ))}
+            </AccordionContent>
+          </AccordionItem>
+        ))}
+      </Accordion>
     </div>
   );
 };
