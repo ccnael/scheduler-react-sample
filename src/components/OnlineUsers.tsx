@@ -29,15 +29,29 @@ export const OnlineUsers: React.FC<OnlineUsersProps> = ({ filterText }) => {
     user.name.toLowerCase().includes(filterText.toLowerCase())
   );
 
+  const groupedUsers = filteredUsers.reduce((acc, user) => {
+    const group = user.group || 'Ungrouped';
+    if (!acc[group]) {
+      acc[group] = [];
+    }
+    acc[group].push(user);
+    return acc;
+  }, {} as Record<string, User[]>);
+
   return (
-    <div className="space-y-2">
-      {filteredUsers.map(user => (
-        <div key={user.id} className="flex items-center justify-between p-2 hover:bg-gray-50 rounded-md">
-          <div className="flex items-center space-x-2">
-            <div className={`w-2 h-2 rounded-full ${user.status === 'online' ? 'bg-green-500' : 'bg-gray-400'}`} />
-            <span className="text-sm font-medium">{user.name}</span>
-          </div>
-          <span className="text-xs text-gray-500">{user.group}</span>
+    <div className="space-y-4">
+      {Object.entries(groupedUsers).map(([group, users]) => (
+        <div key={group} className="space-y-2">
+          <h3 className="text-sm font-semibold text-gray-700 border-b pb-1">{group}</h3>
+          {users.map(user => (
+            <div key={user.id} className="flex items-center justify-between p-2 hover:bg-gray-50 rounded-md">
+              <div className="flex items-center space-x-2">
+                <div className={`w-2 h-2 rounded-full ${user.status === 'online' ? 'bg-green-500' : 'bg-gray-400'}`} />
+                <span className="text-sm font-medium">{user.name}</span>
+              </div>
+              <span className="text-xs text-gray-500">{user.status}</span>
+            </div>
+          ))}
         </div>
       ))}
     </div>

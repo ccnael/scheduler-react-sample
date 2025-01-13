@@ -187,26 +187,15 @@ export const Board = () => {
 
   const filteredCards = cards.filter(card => 
     (availableJobsFilter.titles.length === 0 || availableJobsFilter.titles.includes(card.title)) &&
-    (availableJobsFilter.descriptions.length === 0 || availableJobsFilter.descriptions.includes(card.description)) &&
-    (availableJobsFilter.groups?.length === 0 || availableJobsFilter.groups?.includes(card.group ?? ''))
+    (availableJobsFilter.descriptions.length === 0 || availableJobsFilter.descriptions.includes(card.description))
   );
 
   const filteredEvents = inProgressCards.filter(card =>
     (eventsFilter.titles.length === 0 || eventsFilter.titles.includes(card.title)) &&
-    (eventsFilter.descriptions.length === 0 || eventsFilter.descriptions.includes(card.description)) &&
-    (eventsFilter.groups?.length === 0 || eventsFilter.groups?.includes(card.group ?? ''))
+    (eventsFilter.descriptions.length === 0 || eventsFilter.descriptions.includes(card.description))
   );
 
   const groupedCards = cards.reduce((acc, card) => {
-    const group = card.group || 'Ungrouped';
-    if (!acc[group]) {
-      acc[group] = [];
-    }
-    acc[group].push(card);
-    return acc;
-  }, {} as Record<string, Card[]>);
-
-  const groupedResourceCards = cards.reduce((acc, card) => {
     const group = card.group || 'Ungrouped';
     if (!acc[group]) {
       acc[group] = [];
@@ -248,7 +237,7 @@ export const Board = () => {
                   />
                 </div>
                 <Accordion type="multiple" className="w-full">
-                  {Object.entries(groupedResourceCards).map(([group, groupCards]) => (
+                  {Object.entries(groupedCards).map(([group, groupCards]) => (
                     <AccordionItem value={group} key={group}>
                       <AccordionTrigger className="text-lg font-medium">
                         {group} ({groupCards.length})
@@ -262,8 +251,7 @@ export const Board = () => {
                           {groupCards
                             .filter(card =>
                               (resourcesFilter.titles.length === 0 || resourcesFilter.titles.includes(card.title)) &&
-                              (resourcesFilter.descriptions.length === 0 || resourcesFilter.descriptions.includes(card.description)) &&
-                              (resourcesFilter.groups?.length === 0 || resourcesFilter.groups?.includes(card.group ?? ''))
+                              (resourcesFilter.descriptions.length === 0 || resourcesFilter.descriptions.includes(card.description))
                             )
                             .map((card) => (
                               <Card
@@ -313,47 +301,24 @@ export const Board = () => {
                     onChange={(value) => setAvailableJobsFilter(prev => ({ ...prev, descriptions: value }))}
                     placeholder="Filter by description"
                   />
-                  <MultiSelect
-                    options={uniqueGroups}
-                    selected={availableJobsFilter.groups ?? []}
-                    onChange={(value) => setAvailableJobsFilter(prev => ({ ...prev, groups: value }))}
-                    placeholder="Filter by group"
-                  />
                 </div>
                 <h2 className="text-xl font-semibold text-gray-700">Available Jobs</h2>
-                <Accordion type="multiple" className="w-full">
-                  {Object.entries(groupedCards).map(([group, groupCards]) => (
-                    <AccordionItem value={group} key={group}>
-                      <AccordionTrigger className="text-lg font-medium">
-                        {group} ({groupCards.length})
-                      </AccordionTrigger>
-                      <AccordionContent>
-                        <div className="grid auto-rows-max gap-3 justify-items-center"
-                             style={{
-                               gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
-                               width: '100%'
-                             }}>
-                          {groupCards
-                            .filter(card =>
-                              (availableJobsFilter.titles.length === 0 || availableJobsFilter.titles.includes(card.title)) &&
-                              (availableJobsFilter.descriptions.length === 0 || availableJobsFilter.descriptions.includes(card.description)) &&
-                              (availableJobsFilter.groups?.length === 0 || availableJobsFilter.groups?.includes(card.group ?? ''))
-                            )
-                            .map((card) => (
-                              <Card
-                                key={card.id}
-                                {...card}
-                                draggable
-                                onDragStart={() => handleDragStart(card.id)}
-                                onDragEnd={handleDragEnd}
-                                isDragging={draggedCard === card.id}
-                              />
-                            ))}
-                        </div>
-                      </AccordionContent>
-                    </AccordionItem>
+                <div className="grid auto-rows-max gap-3 justify-items-center"
+                     style={{
+                       gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+                       width: '100%'
+                     }}>
+                  {filteredCards.map((card) => (
+                    <Card
+                      key={card.id}
+                      {...card}
+                      draggable
+                      onDragStart={() => handleDragStart(card.id)}
+                      onDragEnd={handleDragEnd}
+                      isDragging={draggedCard === card.id}
+                    />
                   ))}
-                </Accordion>
+                </div>
               </div>
             </div>
           </ResizablePanel>
@@ -379,12 +344,6 @@ export const Board = () => {
                     selected={eventsFilter.descriptions}
                     onChange={(value) => setEventsFilter(prev => ({ ...prev, descriptions: value }))}
                     placeholder="Filter by description"
-                  />
-                  <MultiSelect
-                    options={uniqueGroups}
-                    selected={eventsFilter.groups ?? []}
-                    onChange={(value) => setEventsFilter(prev => ({ ...prev, groups: value }))}
-                    placeholder="Filter by group"
                   />
                 </div>
                 <h2 className="text-xl font-semibold text-gray-700">Events</h2>
