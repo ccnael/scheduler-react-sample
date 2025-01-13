@@ -206,6 +206,15 @@ export const Board = () => {
     return acc;
   }, {} as Record<string, Card[]>);
 
+  const groupedResourceCards = cards.reduce((acc, card) => {
+    const group = card.group || 'Ungrouped';
+    if (!acc[group]) {
+      acc[group] = [];
+    }
+    acc[group].push(card);
+    return acc;
+  }, {} as Record<string, Card[]>);
+
   return (
     <div className="p-6 min-h-screen bg-gray-50">
       <h1 className="text-3xl font-bold text-gray-800 mb-8">Board</h1>
@@ -238,6 +247,39 @@ export const Board = () => {
                     placeholder="Filter by group"
                   />
                 </div>
+                <Accordion type="multiple" className="w-full">
+                  {Object.entries(groupedResourceCards).map(([group, groupCards]) => (
+                    <AccordionItem value={group} key={group}>
+                      <AccordionTrigger className="text-lg font-medium">
+                        {group} ({groupCards.length})
+                      </AccordionTrigger>
+                      <AccordionContent>
+                        <div className="grid auto-rows-max gap-3 justify-items-center"
+                             style={{
+                               gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+                               width: '100%'
+                             }}>
+                          {groupCards
+                            .filter(card =>
+                              (resourcesFilter.titles.length === 0 || resourcesFilter.titles.includes(card.title)) &&
+                              (resourcesFilter.descriptions.length === 0 || resourcesFilter.descriptions.includes(card.description)) &&
+                              (resourcesFilter.groups?.length === 0 || resourcesFilter.groups?.includes(card.group ?? ''))
+                            )
+                            .map((card) => (
+                              <Card
+                                key={card.id}
+                                {...card}
+                                draggable
+                                onDragStart={() => handleDragStart(card.id)}
+                                onDragEnd={handleDragEnd}
+                                isDragging={draggedCard === card.id}
+                              />
+                            ))}
+                        </div>
+                      </AccordionContent>
+                    </AccordionItem>
+                  ))}
+                </Accordion>
                 <OnlineUsers filterText={resourcesFilter.titles.join(' ')} />
               </div>
             </CollapsibleContent>
