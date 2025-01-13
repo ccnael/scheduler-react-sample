@@ -7,11 +7,11 @@ interface User {
   group: string;
 }
 
-interface OnlineUsersProps {
+interface ResourcesProps {
   filterText: string;
 }
 
-export const OnlineUsers: React.FC<OnlineUsersProps> = ({ filterText }) => {
+export const Resources: React.FC<ResourcesProps> = ({ filterText }) => {
   const users: User[] = [
     { id: 1, name: 'John Doe', status: 'online', group: 'Development' },
     { id: 2, name: 'Jane Smith', status: 'offline', group: 'Design' },
