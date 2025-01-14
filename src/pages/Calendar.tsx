@@ -151,6 +151,14 @@ const CalendarPage = () => {
     toast.success("Event added successfully");
   };
 
+  const customButtons = {
+    filterButton: {
+      text: '',
+      click: () => setIsFilterModalOpen(true),
+      icon: 'filter'
+    }
+  };
+
   return (
     <div className="p-4">
       <h1 className="text-lg font-semibold text-gray-800 mb-3">Calendar</h1>
@@ -165,10 +173,11 @@ const CalendarPage = () => {
               slotDuration="04:00:00"
               slotLabelInterval="04:00:00"
               headerToolbar={{
-                left: "prev,next today",
+                left: "prev,next today filterButton",
                 center: "title",
                 right: "resourceTimelineDay,resourceTimelineThreeDay,resourceTimelineWeek,resourceTimelineMonth"
               }}
+              customButtons={customButtons}
               views={{
                 resourceTimelineThreeDay: {
                   type: 'resourceTimeline',
@@ -180,10 +189,10 @@ const CalendarPage = () => {
               resourceGroupField="group"
               eventClassNames="text-sm"
               slotLabelClassNames="text-sm"
-              resourceLabelClassNames="text-xs" // Reduced font size for resources
+              resourceLabelClassNames="text-xs"
               resourceAreaWidth="15%"
               dayHeaderClassNames="text-sm"
-              resourceGroupLabelClassNames="text-xs" // Reduced font size for groups
+              resourceGroupLabelClassNames="text-xs"
               buttonText={{
                 today: 'Today',
                 month: 'Month',
@@ -200,18 +209,8 @@ const CalendarPage = () => {
                 next: 'chevron-right'
               }}
               droppable={true}
-              eventReceive={handleDrop}
+              drop={handleDrop}
             />
-            <div className="absolute top-4 right-8 z-10 flex items-center gap-2">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setIsFilterModalOpen(true)}
-                className="ml-2"
-              >
-                <Filter className="h-4 w-4" />
-              </Button>
-            </div>
           </div>
         </ResizablePanel>
         
@@ -221,6 +220,13 @@ const CalendarPage = () => {
           <div className="h-full p-4 bg-white">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-semibold text-gray-700">Available Jobs</h2>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setIsFilterModalOpen(true)}
+              >
+                <Filter className="h-4 w-4" />
+              </Button>
             </div>
             <div className="space-y-3">
               {cards.map((card) => (
@@ -231,6 +237,7 @@ const CalendarPage = () => {
                   onDragStart={() => handleDragStart(card.id)}
                   onDragEnd={handleDragEnd}
                   isDragging={draggedCard === card.id}
+                  isEvent={false}
                 />
               ))}
             </div>

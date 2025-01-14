@@ -64,6 +64,9 @@ export const Card = ({
               </>
             ) : (
               <>
+                <DropdownMenuItem onClick={() => onAction?.('update')}>
+                  Update Event
+                </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => onAction?.('complete')}>
                   Complete Event
                 </DropdownMenuItem>
