@@ -60,8 +60,8 @@ const CalendarPage = () => {
   ]);
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-semibold text-gray-800 mb-6">Calendar</h1>
+    <div className="p-4">
+      <h1 className="text-xl font-semibold text-gray-800 mb-4">Calendar</h1>
       <ResizablePanelGroup direction="horizontal" className="min-h-[600px] rounded-lg border">
         <ResizablePanel defaultSize={80}>
           <div className="h-full">
@@ -86,18 +86,18 @@ const CalendarPage = () => {
               }}
               height="100%"
               resourceGroupField="group"
-              eventClassNames="text-sm"
-              slotLabelClassNames="text-xs font-medium"
-              resourceLabelClassNames="text-sm font-medium"
+              eventClassNames="text-xs"
+              slotLabelClassNames="text-xs"
+              resourceLabelClassNames="text-xs"
               buttonText={{
                 today: 'Today',
                 month: 'Month',
                 week: 'Week',
                 day: 'Day'
               }}
-              dayHeaderClassNames="text-xs font-medium"
+              dayHeaderClassNames="text-xs"
               titleFormat={{ 
-                month: 'long',
+                month: 'short',
                 year: 'numeric',
                 day: 'numeric'
               }}

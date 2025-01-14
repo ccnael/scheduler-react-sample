@@ -30,6 +30,16 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface FilterState {
   titles: string[];
@@ -41,6 +51,15 @@ interface Card {
   title: string;
   description: string;
   date?: string;
+}
+
+interface EventFormData {
+  text: string;
+  memo: string;
+  dateFrom: string;
+  dateTo: string;
+  status: string;
+  priority: string;
 }
 
 export const Board = () => {
@@ -127,12 +146,34 @@ export const Board = () => {
     }
   };
 
+  const [formData, setFormData] = useState<EventFormData>({
+    text: '',
+    memo: '',
+    dateFrom: '',
+    dateTo: '',
+    status: 'pending',
+    priority: 'medium'
+  });
+
   const handleSubmit = () => {
+    if (!formData.text || !formData.dateFrom || !formData.dateTo) {
+      toast.error("Please fill in all required fields");
+      return;
+    }
+
     if (selectedCard) {
-      setEvents([...events, selectedCard]);
+      setEvents([...events, { ...selectedCard, ...formData }]);
       setCards(cards.filter(card => card.id !== selectedCard.id));
       setIsModalOpen(false);
       setSelectedCard(null);
+      setFormData({
+        text: '',
+        memo: '',
+        dateFrom: '',
+        dateTo: '',
+        status: 'pending',
+        priority: 'medium'
+      });
     }
   };
 
@@ -248,7 +289,89 @@ export const Board = () => {
           <div className="py-4">
             <Accordion type="single" collapsible defaultValue="item-1" className="w-full">
               <AccordionItem value="item-1">
-                <AccordionTrigger>View Card Details</AccordionTrigger>
+                <AccordionTrigger>Primary Information</AccordionTrigger>
+                <AccordionContent>
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="priority">Priority</Label>
+                        <Select
+                          value={formData.priority}
+                          onValueChange={(value) => setFormData({ ...formData, priority: value })}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select priority" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="low">Low</SelectItem>
+                            <SelectItem value="medium">Medium</SelectItem>
+                            <SelectItem value="high">High</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="status">Status</Label>
+                        <Select
+                          value={formData.status}
+                          onValueChange={(value) => setFormData({ ...formData, status: value })}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select status" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="pending">Pending</SelectItem>
+                            <SelectItem value="in-progress">In Progress</SelectItem>
+                            <SelectItem value="completed">Completed</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="text">Text *</Label>
+                      <Input
+                        id="text"
+                        value={formData.text}
+                        onChange={(e) => setFormData({ ...formData, text: e.target.value })}
+                        placeholder="Enter text"
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="memo">Memo</Label>
+                      <Textarea
+                        id="memo"
+                        value={formData.memo}
+                        onChange={(e) => setFormData({ ...formData, memo: e.target.value })}
+                        placeholder="Enter memo"
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="dateFrom">Date From *</Label>
+                        <Input
+                          id="dateFrom"
+                          type="date"
+                          value={formData.dateFrom}
+                          onChange={(e) => setFormData({ ...formData, dateFrom: e.target.value })}
+                          required
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="dateTo">Date To *</Label>
+                        <Input
+                          id="dateTo"
+                          type="date"
+                          value={formData.dateTo}
+                          onChange={(e) => setFormData({ ...formData, dateTo: e.target.value })}
+                          required
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+              <AccordionItem value="item-2">
+                <AccordionTrigger>Card Details</AccordionTrigger>
                 <AccordionContent>
                   <DataTable data={selectedCard ? [selectedCard] : []} />
                 </AccordionContent>
