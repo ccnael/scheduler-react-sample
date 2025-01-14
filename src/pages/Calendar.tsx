@@ -199,16 +199,17 @@ const CalendarPage = () => {
                 next: 'chevron-right'
               }}
               droppable={true}
-              eventReceive={handleDrop}
+              eventDrop={handleDrop}
             />
-            <Button
-              variant="ghost"
-              size="icon"
-              className="absolute top-24 right-8 z-10"
-              onClick={() => setIsFilterModalOpen(true)}
-            >
-              <Filter className="h-4 w-4" />
-            </Button>
+            <div className="absolute top-24 right-8 z-10 flex gap-2">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setIsFilterModalOpen(true)}
+              >
+                <Filter className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
         </ResizablePanel>
         
