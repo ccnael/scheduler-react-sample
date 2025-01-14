@@ -14,13 +14,14 @@ import {
 } from "@/components/ui/collapsible";
 import { Button } from "@/components/ui/button";
 import { MultiSelect } from './MultiSelect';
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Filter } from "lucide-react";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogFooter,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { DataTable } from './DataTable';
 import {
@@ -177,6 +178,14 @@ export const Board = () => {
     }
   };
 
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+  const [filterType, setFilterType] = useState<'jobs' | 'events'>('jobs');
+
+  const handleOpenFilter = (type: 'jobs' | 'events') => {
+    setFilterType(type);
+    setIsFilterModalOpen(true);
+  };
+
   return (
     <div className="p-6 min-h-screen bg-gray-50">
       <h1 className="text-3xl font-bold text-gray-800 mb-8">Board</h1>
@@ -207,21 +216,16 @@ export const Board = () => {
           <ResizablePanel defaultSize={50}>
             <div className="h-full bg-white p-4">
               <div className="space-y-4">
-                <div className="space-y-2">
-                  <MultiSelect
-                    options={uniqueTitles}
-                    selected={availableJobsFilter.titles}
-                    onChange={(value) => setAvailableJobsFilter(prev => ({ ...prev, titles: value }))}
-                    placeholder="Filter by title"
-                  />
-                  <MultiSelect
-                    options={uniqueDescriptions}
-                    selected={availableJobsFilter.descriptions}
-                    onChange={(value) => setAvailableJobsFilter(prev => ({ ...prev, descriptions: value }))}
-                    placeholder="Filter by description"
-                  />
+                <div className="flex justify-between items-center">
+                  <h2 className="text-xl font-semibold text-gray-700">Available Jobs</h2>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => handleOpenFilter('jobs')}
+                  >
+                    <Filter className="h-4 w-4" />
+                  </Button>
                 </div>
-                <h2 className="text-xl font-semibold text-gray-700">Available Jobs</h2>
                 <ScrollArea className="h-[calc(100vh-300px)]">
                   <div className="grid auto-rows-max gap-3 justify-items-center"
                        style={{
@@ -257,7 +261,16 @@ export const Board = () => {
               onDrop={handleDrop}
             >
               <div className="space-y-4">
-                <h2 className="text-xl font-semibold text-gray-700">Events</h2>
+                <div className="flex justify-between items-center">
+                  <h2 className="text-xl font-semibold text-gray-700">Events</h2>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => handleOpenFilter('events')}
+                  >
+                    <Filter className="h-4 w-4" />
+                  </Button>
+                </div>
                 <ScrollArea className="h-[calc(100vh-300px)]">
                   <div className="grid auto-rows-max gap-3 justify-items-center"
                        style={{
@@ -280,6 +293,7 @@ export const Board = () => {
         </ResizablePanelGroup>
       </div>
 
+      {/* Event Form Dialog */}
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent className="sm:max-w-[1024px]">
           <DialogHeader>
@@ -387,7 +401,44 @@ export const Board = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Filter Modal */}
+      <Dialog open={isFilterModalOpen} onOpenChange={setIsFilterModalOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Filter {filterType === 'jobs' ? 'Available Jobs' : 'Events'}</DialogTitle>
+            <DialogDescription>
+              Select your filter criteria below
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label>Title</Label>
+              <MultiSelect
+                options={uniqueTitles}
+                selected={filterType === 'jobs' ? availableJobsFilter.titles : []}
+                onChange={(value) => filterType === 'jobs' && setAvailableJobsFilter(prev => ({ ...prev, titles: value }))}
+                placeholder="Filter by title"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Description</Label>
+              <MultiSelect
+                options={uniqueDescriptions}
+                selected={filterType === 'jobs' ? availableJobsFilter.descriptions : []}
+                onChange={(value) => filterType === 'jobs' && setAvailableJobsFilter(prev => ({ ...prev, descriptions: value }))}
+                placeholder="Filter by description"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsFilterModalOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={() => setIsFilterModalOpen(false)}>Apply</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
-
