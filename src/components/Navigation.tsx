@@ -8,7 +8,7 @@ export const Navigation = () => {
   return (
     <nav className="border-b mb-6">
       <div className="max-w-screen-xl mx-auto px-4">
-        <div className="flex h-16 items-center">
+        <div className="flex h-16 items-center justify-start">
           <div className="flex space-x-8">
             <Link
               to="/"
