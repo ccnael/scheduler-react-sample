@@ -180,9 +180,10 @@ const CalendarPage = () => {
               resourceGroupField="group"
               eventClassNames="text-sm"
               slotLabelClassNames="text-sm"
-              resourceLabelClassNames="text-base"
+              resourceLabelClassNames="text-xs" // Reduced font size for resources
               resourceAreaWidth="15%"
               dayHeaderClassNames="text-sm"
+              resourceGroupLabelClassNames="text-xs" // Reduced font size for groups
               buttonText={{
                 today: 'Today',
                 month: 'Month',
@@ -199,13 +200,14 @@ const CalendarPage = () => {
                 next: 'chevron-right'
               }}
               droppable={true}
-              drop={handleDrop}
+              eventReceive={handleDrop}
             />
-            <div className="absolute top-24 right-8 z-10 flex gap-2">
+            <div className="absolute top-4 right-8 z-10 flex items-center gap-2">
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={() => setIsFilterModalOpen(true)}
+                className="ml-2"
               >
                 <Filter className="h-4 w-4" />
               </Button>
@@ -219,13 +221,6 @@ const CalendarPage = () => {
           <div className="h-full p-4 bg-white">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-semibold text-gray-700">Available Jobs</h2>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setIsFilterModalOpen(true)}
-              >
-                <Filter className="h-4 w-4" />
-              </Button>
             </div>
             <div className="space-y-3">
               {cards.map((card) => (
