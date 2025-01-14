@@ -176,9 +176,9 @@ const CalendarPage = () => {
               }}
               height="100%"
               resourceGroupField="group"
-              eventClassNames="text-[10px]"
-              slotLabelClassNames="text-[10px]"
-              resourceLabelClassNames="text-sm"
+              eventClassNames="text-sm"
+              slotLabelClassNames="text-sm"
+              resourceLabelClassNames="text-base"
               dayHeaderClassNames="text-sm"
               buttonText={{
                 today: 'Today',
@@ -196,7 +196,7 @@ const CalendarPage = () => {
                 next: 'chevron-right'
               }}
               droppable={true}
-              drop={handleDrop}
+              eventDrop={handleDrop}
             />
           </div>
         </ResizablePanel>
