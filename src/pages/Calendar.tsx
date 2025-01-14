@@ -61,7 +61,7 @@ const CalendarPage = () => {
 
   return (
     <div className="p-6">
-      <h1 className="text-3xl font-bold text-gray-800 mb-8">Calendar</h1>
+      <h1 className="text-2xl font-semibold text-gray-800 mb-6">Calendar</h1>
       <ResizablePanelGroup direction="horizontal" className="min-h-[600px] rounded-lg border">
         <ResizablePanel defaultSize={80}>
           <div className="h-full">
@@ -86,6 +86,21 @@ const CalendarPage = () => {
               }}
               height="100%"
               resourceGroupField="group"
+              eventClassNames="text-sm"
+              slotLabelClassNames="text-xs font-medium"
+              resourceLabelClassNames="text-sm font-medium"
+              buttonText={{
+                today: 'Today',
+                month: 'Month',
+                week: 'Week',
+                day: 'Day'
+              }}
+              dayHeaderClassNames="text-xs font-medium"
+              titleFormat={{ 
+                month: 'long',
+                year: 'numeric',
+                day: 'numeric'
+              }}
             />
           </div>
         </ResizablePanel>
@@ -94,8 +109,8 @@ const CalendarPage = () => {
         
         <ResizablePanel defaultSize={20}>
           <div className="h-full p-4 bg-white">
-            <h2 className="text-xl font-semibold text-gray-700 mb-4">Available Jobs</h2>
-            <div className="space-y-4">
+            <h2 className="text-lg font-semibold text-gray-700 mb-4">Available Jobs</h2>
+            <div className="space-y-3">
               {cards.map((card) => (
                 <Card
                   key={card.id}
