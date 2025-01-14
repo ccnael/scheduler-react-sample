@@ -28,6 +28,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface FilterState {
   titles: string[];
@@ -144,25 +145,27 @@ export const Board = () => {
                   />
                 </div>
                 <h2 className="text-xl font-semibold text-gray-700">Available Jobs</h2>
-                <div className="grid auto-rows-max gap-3 justify-items-center"
-                     style={{
-                       gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
-                       width: '100%'
-                     }}>
-                  {cards.filter(card => 
-                    (availableJobsFilter.titles.length === 0 || availableJobsFilter.titles.includes(card.title)) &&
-                    (availableJobsFilter.descriptions.length === 0 || availableJobsFilter.descriptions.includes(card.description))
-                  ).map((card) => (
-                    <Card
-                      key={card.id}
-                      {...card}
-                      draggable
-                      onDragStart={() => handleDragStart(card.id)}
-                      onDragEnd={handleDragEnd}
-                      isDragging={draggedCard === card.id}
-                    />
-                  ))}
-                </div>
+                <ScrollArea className="h-[calc(100vh-300px)]">
+                  <div className="grid auto-rows-max gap-3 justify-items-center"
+                       style={{
+                         gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+                         width: '100%'
+                       }}>
+                    {cards.filter(card => 
+                      (availableJobsFilter.titles.length === 0 || availableJobsFilter.titles.includes(card.title)) &&
+                      (availableJobsFilter.descriptions.length === 0 || availableJobsFilter.descriptions.includes(card.description))
+                    ).map((card) => (
+                      <Card
+                        key={card.id}
+                        {...card}
+                        draggable
+                        onDragStart={() => handleDragStart(card.id)}
+                        onDragEnd={handleDragEnd}
+                        isDragging={draggedCard === card.id}
+                      />
+                    ))}
+                  </div>
+                </ScrollArea>
               </div>
             </div>
           </ResizablePanel>
@@ -177,18 +180,20 @@ export const Board = () => {
             >
               <div className="space-y-4">
                 <h2 className="text-xl font-semibold text-gray-700">In Progress</h2>
-                <div className="grid auto-rows-max gap-3 justify-items-center"
-                     style={{
-                       gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
-                       width: '100%'
-                     }}>
-                  {inProgressCards.map((card) => (
-                    <Card
-                      key={card.id}
-                      {...card}
-                    />
-                  ))}
-                </div>
+                <ScrollArea className="h-[calc(100vh-300px)]">
+                  <div className="grid auto-rows-max gap-3 justify-items-center"
+                       style={{
+                         gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+                         width: '100%'
+                       }}>
+                    {inProgressCards.map((card) => (
+                      <Card
+                        key={card.id}
+                        {...card}
+                      />
+                    ))}
+                  </div>
+                </ScrollArea>
               </div>
             </div>
           </ResizablePanel>
