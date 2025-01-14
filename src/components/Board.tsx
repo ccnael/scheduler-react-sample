@@ -287,7 +287,7 @@ export const Board = () => {
           </DialogHeader>
           
           <div className="py-4">
-            <Accordion type="single" defaultValue="item-1" className="w-full">
+            <Accordion type="single" defaultValue={["item-1", "item-2"]} className="w-full">
               <AccordionItem value="item-1">
                 <AccordionTrigger>Primary Information</AccordionTrigger>
                 <AccordionContent>

@@ -61,7 +61,7 @@ const CalendarPage = () => {
 
   return (
     <div className="p-4">
-      <h1 className="text-lg font-semibold text-gray-800 mb-3">Calendar</h1>
+      <h1 className="text-sm font-semibold text-gray-800 mb-2">Calendar</h1>
       <ResizablePanelGroup direction="horizontal" className="min-h-[600px] rounded-lg border">
         <ResizablePanel defaultSize={80}>
           <div className="h-full">
@@ -81,21 +81,21 @@ const CalendarPage = () => {
                 resourceTimelineThreeDay: {
                   type: 'resourceTimeline',
                   duration: { days: 3 },
-                  buttonText: '3 days'
+                  buttonText: '3d'
                 }
               }}
               height="100%"
               resourceGroupField="group"
-              eventClassNames="text-[10px]"
-              slotLabelClassNames="text-[10px]"
-              resourceLabelClassNames="text-[10px]"
+              eventClassNames="text-[8px]"
+              slotLabelClassNames="text-[8px]"
+              resourceLabelClassNames="text-[8px]"
               buttonText={{
-                today: 'Today',
+                today: 'T',
                 month: 'M',
                 week: 'W',
                 day: 'D'
               }}
-              dayHeaderClassNames="text-[10px]"
+              dayHeaderClassNames="text-[8px]"
               titleFormat={{ 
                 month: 'short',
                 year: 'numeric',
