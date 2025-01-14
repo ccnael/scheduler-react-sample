@@ -297,7 +297,7 @@ export const Board = () => {
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent className="sm:max-w-[1024px]">
           <DialogHeader>
-            <DialogTitle>Move Card to Events</DialogTitle>
+            <DialogTitle>Create Event</DialogTitle>
           </DialogHeader>
           
           <div className="py-4">
