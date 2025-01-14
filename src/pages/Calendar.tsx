@@ -199,7 +199,7 @@ const CalendarPage = () => {
                 next: 'chevron-right'
               }}
               droppable={true}
-              eventDrop={handleDrop}
+              drop={handleDrop}
             />
             <div className="absolute top-24 right-8 z-10 flex gap-2">
               <Button
