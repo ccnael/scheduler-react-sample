@@ -30,6 +30,10 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
 }) => {
   const [open, setOpen] = React.useState(false);
 
+  // Ensure we always have arrays, even if undefined is passed
+  const safeOptions = options || [];
+  const safeSelected = selected || [];
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -39,9 +43,9 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
           aria-expanded={open}
           className="w-full justify-between"
         >
-          {selected.length === 0
+          {safeSelected.length === 0
             ? placeholder
-            : `${selected.length} selected`}
+            : `${safeSelected.length} selected`}
           <ChevronRight className={`ml-2 h-4 w-4 shrink-0 transition-transform ${open ? 'rotate-90' : ''}`} />
         </Button>
       </PopoverTrigger>
@@ -50,21 +54,21 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
           <CommandInput placeholder={`Search ${placeholder.toLowerCase()}...`} />
           <CommandEmpty>No results found.</CommandEmpty>
           <CommandGroup>
-            {options.map((option) => (
+            {safeOptions.map((option) => (
               <CommandItem
                 key={option}
                 onSelect={() => {
                   onChange(
-                    selected.includes(option)
-                      ? selected.filter((item) => item !== option)
-                      : [...selected, option]
+                    safeSelected.includes(option)
+                      ? safeSelected.filter((item) => item !== option)
+                      : [...safeSelected, option]
                   );
                 }}
               >
                 <Check
                   className={cn(
                     "mr-2 h-4 w-4",
-                    selected.includes(option) ? "opacity-100" : "opacity-0"
+                    safeSelected.includes(option) ? "opacity-100" : "opacity-0"
                   )}
                 />
                 {option}
