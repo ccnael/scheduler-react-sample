@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Card } from './Card';
 import { Resources } from './Resources';
+import { toast } from "sonner";
 import {
   ResizablePanelGroup,
   ResizablePanel,
@@ -39,16 +40,51 @@ interface Card {
   id: number;
   title: string;
   description: string;
+  date?: string;
 }
 
 export const Board = () => {
   const [cards, setCards] = useState<Card[]>([
-    { id: 1, title: 'Frontend Task', description: 'Complete the project setup' },
-    { id: 2, title: 'UI Design', description: 'Design the user interface' },
-    { id: 3, title: 'Backend Task', description: 'Implement core features' },
-    { id: 4, title: 'Documentation', description: 'Write API documentation' },
-    { id: 5, title: 'Testing', description: 'Perform unit testing' },
+    { id: 1, title: 'Frontend Task', description: 'Complete the project setup', date: '2024-02-20' },
+    { id: 2, title: 'UI Design', description: 'Design the user interface', date: '2024-02-21' },
+    { id: 3, title: 'Backend Task', description: 'Implement core features', date: '2024-02-22' },
+    { id: 4, title: 'Documentation', description: 'Write API documentation', date: '2024-02-23' },
+    { id: 5, title: 'Testing', description: 'Perform unit testing', date: '2024-02-24' },
   ]);
+
+  const [events, setEvents] = useState<Card[]>([
+    { id: 6, title: 'Team Meeting', description: 'Weekly sync with the development team', date: '2024-02-25' },
+    { id: 7, title: 'Client Demo', description: 'Present new features to the client', date: '2024-02-26' },
+    { id: 8, title: 'Training Session', description: 'New employee onboarding', date: '2024-02-27' },
+  ]);
+
+  const handleCardAction = (cardId: number, action: string, isEvent: boolean = false) => {
+    const cardList = isEvent ? events : cards;
+    const card = cardList.find(c => c.id === cardId);
+    
+    if (!card) return;
+
+    switch (action) {
+      case 'print':
+        toast.success(`Printing ${card.title}`);
+        break;
+      case 'hold':
+        toast.info(`${card.title} put on hold`);
+        break;
+      case 'close':
+        setCards(cards.filter(c => c.id !== cardId));
+        toast.success(`${card.title} closed`);
+        break;
+      case 'complete':
+        setEvents(events.filter(c => c.id !== cardId));
+        toast.success(`${card.title} completed`);
+        break;
+      case 'remove':
+        setEvents(events.filter(c => c.id !== cardId));
+        toast.info(`${card.title} removed from events`);
+        break;
+    }
+  };
 
   const [draggedCard, setDraggedCard] = useState<number | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -93,7 +129,7 @@ export const Board = () => {
 
   const handleSubmit = () => {
     if (selectedCard) {
-      setInProgressCards([...inProgressCards, selectedCard]);
+      setEvents([...events, selectedCard]);
       setCards(cards.filter(card => card.id !== selectedCard.id));
       setIsModalOpen(false);
       setSelectedCard(null);
@@ -162,6 +198,7 @@ export const Board = () => {
                         onDragStart={() => handleDragStart(card.id)}
                         onDragEnd={handleDragEnd}
                         isDragging={draggedCard === card.id}
+                        onAction={(action) => handleCardAction(card.id, action)}
                       />
                     ))}
                   </div>
@@ -179,17 +216,19 @@ export const Board = () => {
               onDrop={handleDrop}
             >
               <div className="space-y-4">
-                <h2 className="text-xl font-semibold text-gray-700">In Progress</h2>
+                <h2 className="text-xl font-semibold text-gray-700">Events</h2>
                 <ScrollArea className="h-[calc(100vh-300px)]">
                   <div className="grid auto-rows-max gap-3 justify-items-center"
                        style={{
                          gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
                          width: '100%'
                        }}>
-                    {inProgressCards.map((card) => (
+                    {events.map((card) => (
                       <Card
                         key={card.id}
                         {...card}
+                        isEvent
+                        onAction={(action) => handleCardAction(card.id, action, true)}
                       />
                     ))}
                   </div>
@@ -203,7 +242,7 @@ export const Board = () => {
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent className="sm:max-w-[1024px]">
           <DialogHeader>
-            <DialogTitle>Move Card to In Progress</DialogTitle>
+            <DialogTitle>Move Card to Events</DialogTitle>
           </DialogHeader>
           
           <div className="py-4">
