@@ -27,6 +27,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Filter } from "lucide-react";
 import { toast } from "sonner";
 
 interface EventFormData {
@@ -94,6 +95,7 @@ const CalendarPage = () => {
   ]);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const [selectedCard, setSelectedCard] = useState<any>(null);
   const [draggedCard, setDraggedCard] = useState<number | null>(null);
 
@@ -179,6 +181,7 @@ const CalendarPage = () => {
               eventClassNames="text-sm"
               slotLabelClassNames="text-sm"
               resourceLabelClassNames="text-base"
+              resourceAreaWidth="15%"
               dayHeaderClassNames="text-sm"
               buttonText={{
                 today: 'Today',
@@ -196,8 +199,16 @@ const CalendarPage = () => {
                 next: 'chevron-right'
               }}
               droppable={true}
-              eventDrop={handleDrop}
+              eventReceive={handleDrop}
             />
+            <Button
+              variant="ghost"
+              size="icon"
+              className="absolute top-24 right-8 z-10"
+              onClick={() => setIsFilterModalOpen(true)}
+            >
+              <Filter className="h-4 w-4" />
+            </Button>
           </div>
         </ResizablePanel>
         
@@ -205,7 +216,16 @@ const CalendarPage = () => {
         
         <ResizablePanel defaultSize={20}>
           <div className="h-full p-4 bg-white">
-            <h2 className="text-lg font-semibold text-gray-700 mb-4">Available Jobs</h2>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold text-gray-700">Available Jobs</h2>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setIsFilterModalOpen(true)}
+              >
+                <Filter className="h-4 w-4" />
+              </Button>
+            </div>
             <div className="space-y-3">
               {cards.map((card) => (
                 <Card
@@ -332,6 +352,50 @@ const CalendarPage = () => {
               Cancel
             </Button>
             <Button onClick={handleSubmit}>Submit</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isFilterModalOpen} onOpenChange={setIsFilterModalOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Filter</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label>Status</Label>
+              <Select>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All</SelectItem>
+                  <SelectItem value="pending">Pending</SelectItem>
+                  <SelectItem value="in-progress">In Progress</SelectItem>
+                  <SelectItem value="completed">Completed</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label>Priority</Label>
+              <Select>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select priority" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All</SelectItem>
+                  <SelectItem value="low">Low</SelectItem>
+                  <SelectItem value="medium">Medium</SelectItem>
+                  <SelectItem value="high">High</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsFilterModalOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={() => setIsFilterModalOpen(false)}>Apply</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
