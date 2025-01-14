@@ -3,6 +3,40 @@ import FullCalendar from "@fullcalendar/react";
 import resourceTimelinePlugin from "@fullcalendar/resource-timeline";
 import { Card } from "@/components/Card";
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { toast } from "sonner";
+
+interface EventFormData {
+  text: string;
+  memo: string;
+  dateFrom: string;
+  dateTo: string;
+  status: string;
+  priority: string;
+}
 
 const CalendarPage = () => {
   const [resources] = useState([
@@ -59,6 +93,62 @@ const CalendarPage = () => {
     { id: 5, title: 'Task 5', description: 'Write documentation', group: 'Documentation' },
   ]);
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedCard, setSelectedCard] = useState<any>(null);
+  const [draggedCard, setDraggedCard] = useState<number | null>(null);
+
+  const [formData, setFormData] = useState<EventFormData>({
+    text: '',
+    memo: '',
+    dateFrom: '',
+    dateTo: '',
+    status: 'pending',
+    priority: 'medium'
+  });
+
+  const handleDragStart = (cardId: number) => {
+    setDraggedCard(cardId);
+  };
+
+  const handleDragEnd = () => {
+    setDraggedCard(null);
+  };
+
+  const handleDrop = (info: any) => {
+    if (draggedCard) {
+      const card = cards.find(c => c.id === draggedCard);
+      if (card) {
+        setSelectedCard(card);
+        setIsModalOpen(true);
+        setFormData(prev => ({
+          ...prev,
+          dateFrom: info.dateStr,
+          dateTo: info.dateStr
+        }));
+      }
+    }
+  };
+
+  const handleSubmit = () => {
+    if (!formData.text || !formData.dateFrom || !formData.dateTo) {
+      toast.error("Please fill in all required fields");
+      return;
+    }
+
+    // Handle form submission logic here
+    setIsModalOpen(false);
+    setSelectedCard(null);
+    setFormData({
+      text: '',
+      memo: '',
+      dateFrom: '',
+      dateTo: '',
+      status: 'pending',
+      priority: 'medium'
+    });
+    toast.success("Event added successfully");
+  };
+
   return (
     <div className="p-4">
       <h1 className="text-lg font-semibold text-gray-800 mb-3">Calendar</h1>
@@ -88,14 +178,14 @@ const CalendarPage = () => {
               resourceGroupField="group"
               eventClassNames="text-[10px]"
               slotLabelClassNames="text-[10px]"
-              resourceLabelClassNames="text-[10px]"
+              resourceLabelClassNames="text-sm"
+              dayHeaderClassNames="text-sm"
               buttonText={{
                 today: 'Today',
                 month: 'Month',
                 week: 'Week',
                 day: 'Day'
               }}
-              dayHeaderClassNames="text-[10px]"
               titleFormat={{ 
                 month: 'short',
                 year: 'numeric',
@@ -105,6 +195,8 @@ const CalendarPage = () => {
                 prev: 'chevron-left',
                 next: 'chevron-right'
               }}
+              droppable={true}
+              drop={handleDrop}
             />
           </div>
         </ResizablePanel>
@@ -120,14 +212,129 @@ const CalendarPage = () => {
                   key={card.id}
                   {...card}
                   draggable
-                  onDragStart={() => console.log('Drag started:', card.id)}
-                  onDragEnd={() => console.log('Drag ended:', card.id)}
+                  onDragStart={() => handleDragStart(card.id)}
+                  onDragEnd={handleDragEnd}
+                  isDragging={draggedCard === card.id}
                 />
               ))}
             </div>
           </div>
         </ResizablePanel>
       </ResizablePanelGroup>
+
+      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <DialogContent className="sm:max-w-[1024px]">
+          <DialogHeader>
+            <DialogTitle>Move Card to Events</DialogTitle>
+          </DialogHeader>
+          
+          <div className="py-4">
+            <Accordion type="multiple" defaultValue={["item-1", "item-2"]} className="w-full">
+              <AccordionItem value="item-1">
+                <AccordionTrigger>Primary Information</AccordionTrigger>
+                <AccordionContent>
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="priority">Priority</Label>
+                        <Select
+                          value={formData.priority}
+                          onValueChange={(value) => setFormData({ ...formData, priority: value })}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select priority" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="low">Low</SelectItem>
+                            <SelectItem value="medium">Medium</SelectItem>
+                            <SelectItem value="high">High</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="status">Status</Label>
+                        <Select
+                          value={formData.status}
+                          onValueChange={(value) => setFormData({ ...formData, status: value })}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select status" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="pending">Pending</SelectItem>
+                            <SelectItem value="in-progress">In Progress</SelectItem>
+                            <SelectItem value="completed">Completed</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="text">Text *</Label>
+                      <Input
+                        id="text"
+                        value={formData.text}
+                        onChange={(e) => setFormData({ ...formData, text: e.target.value })}
+                        placeholder="Enter text"
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="memo">Memo</Label>
+                      <Textarea
+                        id="memo"
+                        value={formData.memo}
+                        onChange={(e) => setFormData({ ...formData, memo: e.target.value })}
+                        placeholder="Enter memo"
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="dateFrom">Date From *</Label>
+                        <Input
+                          id="dateFrom"
+                          type="date"
+                          value={formData.dateFrom}
+                          onChange={(e) => setFormData({ ...formData, dateFrom: e.target.value })}
+                          required
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="dateTo">Date To *</Label>
+                        <Input
+                          id="dateTo"
+                          type="date"
+                          value={formData.dateTo}
+                          onChange={(e) => setFormData({ ...formData, dateTo: e.target.value })}
+                          required
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+              <AccordionItem value="item-2">
+                <AccordionTrigger>Card Details</AccordionTrigger>
+                <AccordionContent>
+                  {selectedCard && (
+                    <div className="space-y-2">
+                      <p><strong>Title:</strong> {selectedCard.title}</p>
+                      <p><strong>Description:</strong> {selectedCard.description}</p>
+                      <p><strong>Group:</strong> {selectedCard.group}</p>
+                    </div>
+                  )}
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsModalOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleSubmit}>Submit</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
