@@ -34,11 +34,6 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
   const safeOptions = options || [];
   const safeSelected = selected || [];
 
-  const handleSelect = (currentValue: string) => {
-    // Temporarily prevent selection to avoid errors
-    setOpen(false);
-  };
-
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -62,7 +57,7 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
             {safeOptions.map((option) => (
               <CommandItem
                 key={option}
-                onSelect={() => handleSelect(option)}
+                onSelect={() => setOpen(false)}
               >
                 <Check
                   className={cn(
