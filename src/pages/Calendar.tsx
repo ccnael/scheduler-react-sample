@@ -209,7 +209,7 @@ const CalendarPage = () => {
                 next: 'chevron-right'
               }}
               droppable={true}
-              drop={handleDrop}
+              eventDrop={handleDrop}
             />
           </div>
         </ResizablePanel>

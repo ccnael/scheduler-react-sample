@@ -31,8 +31,8 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
   const [open, setOpen] = React.useState(false);
 
   // Ensure we always have arrays, even if undefined is passed
-  const safeOptions = options || [];
-  const safeSelected = selected || [];
+  const safeOptions = Array.isArray(options) ? options : [];
+  const safeSelected = Array.isArray(selected) ? selected : [];
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
