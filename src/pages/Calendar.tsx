@@ -170,6 +170,14 @@ const CalendarPage = () => {
     toast.success("Event added successfully");
   };
 
+  const customButtons = {
+    filterButton: {
+      text: '',
+      click: () => setIsFilterModalOpen(true),
+      icon: 'filter'
+    }
+  };
+
   return (
     <div className="p-4">
       <h1 className="text-lg font-semibold text-gray-800 mb-3">Calendar</h1>
@@ -184,10 +192,11 @@ const CalendarPage = () => {
               slotDuration="04:00:00"
               slotLabelInterval="04:00:00"
               headerToolbar={{
-                left: "prev,next today",
+                left: "prev,next today filterButton",
                 center: "title",
                 right: "resourceTimelineDay,resourceTimelineThreeDay,resourceTimelineWeek,resourceTimelineMonth"
               }}
+              customButtons={customButtons}
               views={{
                 resourceTimelineThreeDay: {
                   type: 'resourceTimeline',
@@ -219,7 +228,7 @@ const CalendarPage = () => {
                 next: 'chevron-right'
               }}
               droppable={true}
-              eventDrop={handleDrop}
+              eventReceive={handleDrop}
             />
           </div>
         </ResizablePanel>
