@@ -41,6 +41,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
 
 interface FilterState {
   titles: string[];
@@ -186,6 +187,10 @@ export const Board = () => {
     setIsFilterModalOpen(true);
   };
 
+  const getActiveFiltersCount = (filter: FilterState) => {
+    return filter.titles.length + filter.descriptions.length;
+  };
+
   return (
     <div className="p-6 min-h-screen bg-gray-50">
       <h1 className="text-3xl font-bold text-gray-800 mb-8">Board</h1>
@@ -218,13 +223,23 @@ export const Board = () => {
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
                   <h2 className="text-xl font-semibold text-gray-700">Available Jobs</h2>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => handleOpenFilter('jobs')}
-                  >
-                    <Filter className="h-4 w-4" />
-                  </Button>
+                  <div className="relative">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => handleOpenFilter('jobs')}
+                    >
+                      <Filter className="h-4 w-4" />
+                    </Button>
+                    {getActiveFiltersCount(availableJobsFilter) > 0 && (
+                      <Badge 
+                        variant="secondary"
+                        className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0"
+                      >
+                        {getActiveFiltersCount(availableJobsFilter)}
+                      </Badge>
+                    )}
+                  </div>
                 </div>
                 <ScrollArea className="h-[calc(100vh-300px)]">
                   <div className="grid auto-rows-max gap-3 justify-items-center"
@@ -263,13 +278,23 @@ export const Board = () => {
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
                   <h2 className="text-xl font-semibold text-gray-700">Events</h2>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => handleOpenFilter('events')}
-                  >
-                    <Filter className="h-4 w-4" />
-                  </Button>
+                  <div className="relative">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => handleOpenFilter('events')}
+                    >
+                      <Filter className="h-4 w-4" />
+                    </Button>
+                    {getActiveFiltersCount(resourcesFilter) > 0 && (
+                      <Badge 
+                        variant="secondary"
+                        className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0"
+                      >
+                        {getActiveFiltersCount(resourcesFilter)}
+                      </Badge>
+                    )}
+                  </div>
                 </div>
                 <ScrollArea className="h-[calc(100vh-300px)]">
                   <div className="grid auto-rows-max gap-3 justify-items-center"
