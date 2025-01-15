@@ -121,8 +121,8 @@ export const Board = () => {
     descriptions: ['Implement core features'], // Added initial selection
   });
 
-  const uniqueTitles = Array.from(new Set(cards?.map(card => card.title) ?? []));
-  const uniqueDescriptions = Array.from(new Set(cards?.map(card => card.description) ?? []));
+  const uniqueTitles = Array.from(new Set(cards?.map(card => card.title) ?? [])).filter(Boolean);
+  const uniqueDescriptions = Array.from(new Set(cards?.map(card => card.description) ?? [])).filter(Boolean);
 
   const handleDragStart = (cardId: number) => {
     setDraggedCard(cardId);
