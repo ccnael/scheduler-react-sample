@@ -172,9 +172,9 @@ const CalendarPage = () => {
 
   const customButtons = {
     filterButton: {
-      text: '',
+      text: 'Filter',
       click: () => setIsFilterModalOpen(true),
-      icon: <Filter className="h-4 w-4" />
+      icon: 'filter' // Changed to string instead of JSX element
     }
   };
 
@@ -228,7 +228,7 @@ const CalendarPage = () => {
                 next: 'chevron-right'
               }}
               droppable={true}
-              eventReceive={handleDrop}
+              eventDrop={handleDrop}
             />
           </div>
         </ResizablePanel>
