@@ -13,7 +13,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Filter } from "lucide-react";
+import { Filter, BluetoothConnected, BluetoothOff } from "lucide-react";
 import { MultiSelect } from './MultiSelect';
 
 interface User {
@@ -120,10 +120,20 @@ export const Resources: React.FC<ResourcesProps> = ({ filterText }) => {
                   className="flex items-center justify-between p-2 hover:bg-gray-50 rounded-md"
                 >
                   <div className="flex items-center space-x-2">
-                    <div className={`w-2 h-2 rounded-full ${user.status === 'online' ? 'bg-green-500' : 'bg-gray-400'}`} />
+                    {user.status === 'online' ? (
+                      <BluetoothConnected className="h-4 w-4 text-green-500" />
+                    ) : (
+                      <BluetoothOff className="h-4 w-4 text-gray-400" />
+                    )}
                     <span className="text-sm font-medium">{user.name}</span>
                   </div>
-                  <span className="text-xs text-gray-500">{user.status}</span>
+                  <div className="flex items-center space-x-2">
+                    {user.status === 'online' ? (
+                      <span className="text-xs text-green-500">online</span>
+                    ) : (
+                      <span className="text-xs text-gray-400">offline</span>
+                    )}
+                  </div>
                 </div>
               ))}
             </AccordionContent>
