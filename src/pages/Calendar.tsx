@@ -174,7 +174,7 @@ const CalendarPage = () => {
     filterButton: {
       text: '',
       click: () => setIsFilterModalOpen(true),
-      icon: 'filter'
+      icon: <Filter className="h-4 w-4" />
     }
   };
 
