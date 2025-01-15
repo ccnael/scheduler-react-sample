@@ -45,6 +45,8 @@ interface EventFormData {
 interface FilterState {
   statuses: string[];
   priorities: string[];
+  groups: string[];
+  resources: string[];
 }
 
 const CalendarPage = () => {
@@ -119,10 +121,14 @@ const CalendarPage = () => {
   const [filterState, setFilterState] = useState<FilterState>({
     statuses: [],
     priorities: [],
+    groups: [],
+    resources: []
   });
 
   const statusOptions = ['pending', 'in-progress', 'completed'];
   const priorityOptions = ['low', 'medium', 'high'];
+  const groupOptions = Array.from(new Set(resources.map(r => r.group)));
+  const resourceOptions = resources.map(r => r.title);
 
   const getActiveFiltersCount = (filters: string[]) => {
     return filters.length;
@@ -219,7 +225,7 @@ const CalendarPage = () => {
                 next: 'chevron-right'
               }}
               droppable={true}
-              eventReceive={handleDrop}
+              drop={handleDrop}
             />
           </div>
         </ResizablePanel>
@@ -238,12 +244,18 @@ const CalendarPage = () => {
                 >
                   <Filter className="h-4 w-4" />
                 </Button>
-                {(getActiveFiltersCount(filterState.statuses) + getActiveFiltersCount(filterState.priorities)) > 0 && (
+                {(getActiveFiltersCount(filterState.statuses) + 
+                  getActiveFiltersCount(filterState.priorities) + 
+                  getActiveFiltersCount(filterState.groups) + 
+                  getActiveFiltersCount(filterState.resources)) > 0 && (
                   <Badge 
                     variant="secondary"
                     className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0"
                   >
-                    {getActiveFiltersCount(filterState.statuses) + getActiveFiltersCount(filterState.priorities)}
+                    {getActiveFiltersCount(filterState.statuses) + 
+                     getActiveFiltersCount(filterState.priorities) + 
+                     getActiveFiltersCount(filterState.groups) + 
+                     getActiveFiltersCount(filterState.resources)}
                   </Badge>
                 )}
               </div>
@@ -267,6 +279,7 @@ const CalendarPage = () => {
         </ResizablePanel>
       </ResizablePanelGroup>
 
+      {/* Event Form Modal */}
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent className="sm:max-w-[1024px]">
           <DialogHeader>
@@ -381,6 +394,7 @@ const CalendarPage = () => {
         </DialogContent>
       </Dialog>
 
+      {/* Filter Modal */}
       <Dialog open={isFilterModalOpen} onOpenChange={setIsFilterModalOpen}>
         <DialogContent>
           <DialogHeader>
@@ -420,6 +434,38 @@ const CalendarPage = () => {
                 selected={filterState.priorities}
                 onChange={(value) => setFilterState(prev => ({ ...prev, priorities: value }))}
                 placeholder="Select priority"
+              />
+            </div>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <Label>Groups</Label>
+                {getActiveFiltersCount(filterState.groups) > 0 && (
+                  <Badge variant="secondary">
+                    {getActiveFiltersCount(filterState.groups)}
+                  </Badge>
+                )}
+              </div>
+              <MultiSelect
+                options={groupOptions}
+                selected={filterState.groups}
+                onChange={(value) => setFilterState(prev => ({ ...prev, groups: value }))}
+                placeholder="Select groups"
+              />
+            </div>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <Label>Resources</Label>
+                {getActiveFiltersCount(filterState.resources) > 0 && (
+                  <Badge variant="secondary">
+                    {getActiveFiltersCount(filterState.resources)}
+                  </Badge>
+                )}
+              </div>
+              <MultiSelect
+                options={resourceOptions}
+                selected={filterState.resources}
+                onChange={(value) => setFilterState(prev => ({ ...prev, resources: value }))}
+                placeholder="Select resources"
               />
             </div>
           </div>
