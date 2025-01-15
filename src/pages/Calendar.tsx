@@ -9,6 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -29,6 +30,8 @@ import {
 } from "@/components/ui/accordion";
 import { Filter } from "lucide-react";
 import { toast } from "sonner";
+import { MultiSelect } from "@/components/MultiSelect";
+import { Badge } from "@/components/ui/badge";
 
 interface EventFormData {
   text: string;
@@ -37,6 +40,11 @@ interface EventFormData {
   dateTo: string;
   status: string;
   priority: string;
+}
+
+interface FilterState {
+  statuses: string[];
+  priorities: string[];
 }
 
 const CalendarPage = () => {
@@ -108,6 +116,18 @@ const CalendarPage = () => {
     priority: 'medium'
   });
 
+  const [filterState, setFilterState] = useState<FilterState>({
+    statuses: [],
+    priorities: [],
+  });
+
+  const statusOptions = ['pending', 'in-progress', 'completed'];
+  const priorityOptions = ['low', 'medium', 'high'];
+
+  const getActiveFiltersCount = (filter: FilterState) => {
+    return filter.statuses.length + filter.priorities.length;
+  };
+
   const handleDragStart = (cardId: number) => {
     setDraggedCard(cardId);
   };
@@ -137,7 +157,6 @@ const CalendarPage = () => {
       return;
     }
 
-    // Handle form submission logic here
     setIsModalOpen(false);
     setSelectedCard(null);
     setFormData({
@@ -209,7 +228,7 @@ const CalendarPage = () => {
                 next: 'chevron-right'
               }}
               droppable={true}
-              onEventDrop={handleDrop}
+              eventReceive={handleDrop}
             />
           </div>
         </ResizablePanel>
@@ -220,13 +239,23 @@ const CalendarPage = () => {
           <div className="h-full p-4 bg-white">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-semibold text-gray-700">Available Jobs</h2>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setIsFilterModalOpen(true)}
-              >
-                <Filter className="h-4 w-4" />
-              </Button>
+              <div className="relative">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setIsFilterModalOpen(true)}
+                >
+                  <Filter className="h-4 w-4" />
+                </Button>
+                {getActiveFiltersCount(filterState) > 0 && (
+                  <Badge 
+                    variant="secondary"
+                    className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0"
+                  >
+                    {getActiveFiltersCount(filterState)}
+                  </Badge>
+                )}
+              </div>
             </div>
             <div className="space-y-3">
               {cards.map((card) => (
@@ -363,35 +392,28 @@ const CalendarPage = () => {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Filter</DialogTitle>
+            <DialogDescription>
+              Select your filter criteria below
+            </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
             <div className="space-y-2">
               <Label>Status</Label>
-              <Select>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All</SelectItem>
-                  <SelectItem value="pending">Pending</SelectItem>
-                  <SelectItem value="in-progress">In Progress</SelectItem>
-                  <SelectItem value="completed">Completed</SelectItem>
-                </SelectContent>
-              </Select>
+              <MultiSelect
+                options={statusOptions}
+                selected={filterState.statuses}
+                onChange={(value) => setFilterState(prev => ({ ...prev, statuses: value }))}
+                placeholder="Select status"
+              />
             </div>
             <div className="space-y-2">
               <Label>Priority</Label>
-              <Select>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select priority" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All</SelectItem>
-                  <SelectItem value="low">Low</SelectItem>
-                  <SelectItem value="medium">Medium</SelectItem>
-                  <SelectItem value="high">High</SelectItem>
-                </SelectContent>
-              </Select>
+              <MultiSelect
+                options={priorityOptions}
+                selected={filterState.priorities}
+                onChange={(value) => setFilterState(prev => ({ ...prev, priorities: value }))}
+                placeholder="Select priority"
+              />
             </div>
           </div>
           <DialogFooter>
