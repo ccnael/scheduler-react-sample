@@ -57,7 +57,10 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
             {safeOptions.map((option) => (
               <CommandItem
                 key={option}
-                onSelect={() => setOpen(false)}
+                value={option}
+                onSelect={() => {
+                  setOpen(false);
+                }}
               >
                 <Check
                   className={cn(
