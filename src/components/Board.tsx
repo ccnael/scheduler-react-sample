@@ -113,12 +113,12 @@ export const Board = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   
   const [resourcesFilter, setResourcesFilter] = useState<FilterState>({
-    titles: ['Frontend Task', 'UI Design'], // Added initial selections
-    descriptions: ['Complete the project setup'], // Added initial selection
+    titles: [],
+    descriptions: [],
   });
   const [availableJobsFilter, setAvailableJobsFilter] = useState<FilterState>({
-    titles: ['Backend Task', 'Documentation'], // Added initial selections
-    descriptions: ['Implement core features'], // Added initial selection
+    titles: [],
+    descriptions: [],
   });
 
   const uniqueTitles = Array.from(new Set(cards?.map(card => card.title) ?? []));
