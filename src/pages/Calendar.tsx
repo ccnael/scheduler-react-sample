@@ -192,11 +192,10 @@ const CalendarPage = () => {
               slotDuration="04:00:00"
               slotLabelInterval="04:00:00"
               headerToolbar={{
-                left: "prev,next today filterButton",
+                left: "prev,next today",
                 center: "title",
                 right: "resourceTimelineDay,resourceTimelineThreeDay,resourceTimelineWeek,resourceTimelineMonth"
               }}
-              customButtons={customButtons}
               views={{
                 resourceTimelineThreeDay: {
                   type: 'resourceTimeline',
@@ -228,7 +227,7 @@ const CalendarPage = () => {
                 next: 'chevron-right'
               }}
               droppable={true}
-              eventDrop={handleDrop}
+              drop={handleDrop}
             />
           </div>
         </ResizablePanel>
@@ -258,17 +257,19 @@ const CalendarPage = () => {
               </div>
             </div>
             <div className="space-y-3">
-              {cards.map((card) => (
-                <Card
-                  key={card.id}
-                  {...card}
-                  draggable
-                  onDragStart={() => handleDragStart(card.id)}
-                  onDragEnd={handleDragEnd}
-                  isDragging={draggedCard === card.id}
-                  isEvent={false}
-                />
-              ))}
+              <div className="grid grid-cols-2 gap-2">
+                {cards.map((card) => (
+                  <Card
+                    key={card.id}
+                    {...card}
+                    draggable
+                    onDragStart={() => handleDragStart(card.id)}
+                    onDragEnd={handleDragEnd}
+                    isDragging={draggedCard === card.id}
+                    isEvent={false}
+                  />
+                ))}
+              </div>
             </div>
           </div>
         </ResizablePanel>

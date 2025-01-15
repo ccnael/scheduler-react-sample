@@ -37,16 +37,16 @@ export const Card = ({
       onDragStart={onDragStart}
       onDragEnd={onDragEnd}
       className={`
-        bg-white rounded-lg border border-gray-200 p-4 cursor-grab
-        transition-all duration-200 w-[200px] relative
+        bg-white rounded-lg border border-gray-200 p-2 cursor-grab
+        transition-all duration-200 w-full relative
         ${isDragging ? 'opacity-50' : 'opacity-100'}
         hover:shadow-lg hover:border-blue-200
       `}
     >
-      <div className="flex justify-between items-start mb-2">
-        <h3 className="font-semibold text-gray-800 truncate flex-1">{title}</h3>
+      <div className="flex justify-between items-start mb-1">
+        <h3 className="font-semibold text-gray-800 text-sm truncate flex-1">{title}</h3>
         <DropdownMenu>
-          <DropdownMenuTrigger className="h-8 w-8 inline-flex items-center justify-center rounded-md hover:bg-slate-100">
+          <DropdownMenuTrigger className="h-6 w-6 inline-flex items-center justify-center rounded-md hover:bg-slate-100">
             <MoreHorizontal className="h-4 w-4" />
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
@@ -78,9 +78,9 @@ export const Card = ({
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <p className="text-gray-600 text-sm line-clamp-2 mb-2">{description}</p>
+      <p className="text-gray-600 text-xs line-clamp-2 mb-1">{description}</p>
       {group && (
-        <span className="inline-block px-2 py-1 text-xs font-medium bg-gray-100 text-gray-600 rounded">
+        <span className="inline-block px-1.5 py-0.5 text-xs font-medium bg-gray-100 text-gray-600 rounded">
           {group}
         </span>
       )}
