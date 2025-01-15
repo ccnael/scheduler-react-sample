@@ -124,8 +124,8 @@ const CalendarPage = () => {
   const statusOptions = ['pending', 'in-progress', 'completed'];
   const priorityOptions = ['low', 'medium', 'high'];
 
-  const getActiveFiltersCount = (filter: FilterState) => {
-    return filter.statuses.length + filter.priorities.length;
+  const getActiveFiltersCount = (filters: string[]) => {
+    return filters.length;
   };
 
   const handleDragStart = (cardId: number) => {
@@ -168,14 +168,6 @@ const CalendarPage = () => {
       priority: 'medium'
     });
     toast.success("Event added successfully");
-  };
-
-  const customButtons = {
-    filterButton: {
-      text: 'Filter',
-      click: () => setIsFilterModalOpen(true),
-      icon: 'filter' // Changed to string instead of JSX element
-    }
   };
 
   return (
@@ -227,7 +219,7 @@ const CalendarPage = () => {
                 next: 'chevron-right'
               }}
               droppable={true}
-              drop={handleDrop}
+              eventReceive={handleDrop}
             />
           </div>
         </ResizablePanel>
@@ -246,12 +238,12 @@ const CalendarPage = () => {
                 >
                   <Filter className="h-4 w-4" />
                 </Button>
-                {getActiveFiltersCount(filterState) > 0 && (
+                {(getActiveFiltersCount(filterState.statuses) + getActiveFiltersCount(filterState.priorities)) > 0 && (
                   <Badge 
                     variant="secondary"
                     className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0"
                   >
-                    {getActiveFiltersCount(filterState)}
+                    {getActiveFiltersCount(filterState.statuses) + getActiveFiltersCount(filterState.priorities)}
                   </Badge>
                 )}
               </div>
@@ -399,7 +391,14 @@ const CalendarPage = () => {
           </DialogHeader>
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label>Status</Label>
+              <div className="flex items-center justify-between">
+                <Label>Status</Label>
+                {getActiveFiltersCount(filterState.statuses) > 0 && (
+                  <Badge variant="secondary">
+                    {getActiveFiltersCount(filterState.statuses)}
+                  </Badge>
+                )}
+              </div>
               <MultiSelect
                 options={statusOptions}
                 selected={filterState.statuses}
@@ -408,7 +407,14 @@ const CalendarPage = () => {
               />
             </div>
             <div className="space-y-2">
-              <Label>Priority</Label>
+              <div className="flex items-center justify-between">
+                <Label>Priority</Label>
+                {getActiveFiltersCount(filterState.priorities) > 0 && (
+                  <Badge variant="secondary">
+                    {getActiveFiltersCount(filterState.priorities)}
+                  </Badge>
+                )}
+              </div>
               <MultiSelect
                 options={priorityOptions}
                 selected={filterState.priorities}
