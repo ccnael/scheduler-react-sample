@@ -142,7 +142,7 @@ const CalendarPage = () => {
     setDraggedCard(null);
   };
 
-  const handleDrop = (info: any) => {
+  const handleEventReceive = (info: any) => {
     if (draggedCard) {
       const card = cards.find(c => c.id === draggedCard);
       if (card) {
@@ -225,7 +225,7 @@ const CalendarPage = () => {
                 next: 'chevron-right'
               }}
               droppable={true}
-              drop={handleDrop}
+              eventReceive={handleEventReceive}
             />
           </div>
         </ResizablePanel>
